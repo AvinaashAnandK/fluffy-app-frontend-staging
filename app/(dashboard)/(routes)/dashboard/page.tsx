@@ -160,11 +160,11 @@ procedure tagging space. We want to automatically tag and classify videos of sur
             <>
                Fluffy has broken down your query into atomic tasks. Delve deep to discover the most effective models for each task.
             {
-              subtask?.map((subtask, index) => 
-                  <div key={index}>
-                      <SubtaskCard {...subtask} refinedApproachResponse={refinedApproachResponse} />
-                  </div>
-              )
+              subtask?.filter((_, index) => index !== null).map((subtask, index) => 
+              <div key={index}>
+                  <SubtaskCard {...subtask} refinedApproachResponse={refinedApproachResponse} />
+              </div>
+          )
           }
             </>
           ) : (

@@ -27,7 +27,7 @@ import ModelCard from './model-card';
   
 
 interface SubtaskProps {
-  index: number;
+  index: number | null;
   solutionCallouts: string;
   solutionDescription: string;
   solutionType: string;
@@ -57,9 +57,10 @@ const SubtaskCard = ({ refinedApproachResponse, ...sampleTask }: SubtaskProps) =
     
             try {
                 console.log("Calling approach gen APIs");
+                const indexValue = sampleTask.index || 0;
                 const response = await axios.post("/api/fetchmodels", {
                     approach_raw: refinedApproachResponse.data,
-                    index: sampleTask.index - 1
+                    index: indexValue - 1
                 });
                 
                     // console.log("Response received for subtask",sampleTask.index)
@@ -87,7 +88,7 @@ const SubtaskCard = ({ refinedApproachResponse, ...sampleTask }: SubtaskProps) =
         <div className="">
             <Accordion type="single" collapsible>
             <AccordionItem value="item-1">
-                <AccordionTrigger index={sampleTask.index}>
+                <AccordionTrigger index={sampleTask.index || 0}>
                     {toTitleCase(sampleTask.subtaskName)}
                 </AccordionTrigger>
                 <AccordionContent>
