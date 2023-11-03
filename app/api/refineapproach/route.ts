@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import axios from "axios";
-
+export const maxDuration = 60;
 export async function POST(req: Request) {
     try {
         const { userId } = auth();
