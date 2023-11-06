@@ -7,9 +7,8 @@ import { Cloud,
 } from 'lucide-react';
 
 const LandingFeatures = () => {
-    return ( 
-        <section className="text-white font-bold pb-36 text-center space-y-5 ">
-      <div className="px-4 md:px-6 ">
+    return (
+      <div className="w-full px-4 md:px-6 text-white font-bold pb-36 pt-10 text-center space-y-5 ">
         <div className="grid gap-6 items-center">
           <div className="flex flex-col justify-center space-y-8 text-center">
             <div className="space-y-2">
@@ -23,7 +22,7 @@ const LandingFeatures = () => {
             <div className="w-full max-w-full space-y-4 mx-auto">
               <div className="grid grid-cols-3 gap-8">
                 <div className="flex flex-col items-center space-y-2 border-gray-800 p-4 rounded-lg">
-                  <div className="p-2 bg-black bg-opacity-50 rounded-full">
+                  <div className="p-2 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500  rounded-full">
                     <Puzzle className='h-8 w-8'/>
                   </div>
                   <h2 className="text-xl font-bold text-white">
@@ -34,7 +33,7 @@ const LandingFeatures = () => {
                   </p>
                 </div>
                 <div className="flex flex-col items-center space-y-2 border-gray-800 p-4 rounded-lg">
-                <div className="p-2 bg-black bg-opacity-50 rounded-full">
+                <div className="p-2 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500  rounded-full">
                     <SearchCode className='h-8 w-8'/>
                 </div>
                 <h2 className="text-xl font-bold text-white">
@@ -45,7 +44,7 @@ const LandingFeatures = () => {
                 </p>
                 </div>
                 <div className="flex flex-col items-center space-y-2 border-gray-800 p-4 rounded-lg">
-                <div className="p-2 bg-black bg-opacity-50 rounded-full">
+                <div className="p-2 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500  rounded-full">
                     <ToyBrick className='h-8 w-8'/>
                 </div>
                 <h2 className="text-xl font-bold text-white">
@@ -56,7 +55,7 @@ const LandingFeatures = () => {
                 </p>
                 </div>
                 <div className="flex flex-col items-center space-y-2 border-gray-800 p-4 rounded-lg">
-                <div className="p-2 bg-black bg-opacity-50 rounded-full">
+                <div className="p-2 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500  rounded-full">
                     <Slack className='h-8 w-8'/>
                 </div>
                 <h2 className="text-xl font-bold text-white">
@@ -67,7 +66,7 @@ const LandingFeatures = () => {
                 </p>
                 </div>
                 <div className="flex flex-col items-center space-y-2 border-gray-800 p-4 rounded-lg">
-                <div className="p-2 bg-black bg-opacity-50 rounded-full">
+                <div className="p-2 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-full">
                     <Cloud className='h-8 w-8'/>
                 </div>
                 <h2 className="text-xl font-bold text-white">
@@ -78,7 +77,7 @@ const LandingFeatures = () => {
                 </p>
                 </div>
                 <div className="flex flex-col items-center space-y-2 border-gray-800 p-4 rounded-lg">
-                <div className="p-2 bg-black bg-opacity-50 rounded-full">
+                <div className="p-2 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500  rounded-full">
                     <Code className='h-8 w-8'/>
                 </div>
                 <h2 className="text-xl font-bold text-white">
@@ -93,7 +92,6 @@ const LandingFeatures = () => {
           </div>
         </div>
       </div>
-    </section>
     );
 }
  

@@ -9,7 +9,7 @@ const LandingHero = () => {
     const { isSignedIn } = useAuth();
 
     return ( 
-    <div className="text-white font-bold py-36 text-center space-y-5">
+    <div className="text-white font-bold py-36 text-center space-y-5 border-b-2 ">
         <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl"> 
             <h1>
                 Discover state of the art models in
