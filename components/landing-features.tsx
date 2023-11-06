@@ -16,7 +16,7 @@ const LandingFeatures = () => {
               <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-500">
               Unlock AI's Potential with Ease
               </h1>
-              <p className="max-w-[600px] text-zinc-200 md:text-xl dark:text-zinc-100 mx-auto">
+              <p className="max-w-[600px] text-zinc-200 md:text-xl dark:text-zinc-100 mx-auto font-normal">
               From complex problem-solving to seamless integration - Fluffy's features are designed to streamline your AI journey.
               </p>
             </div>
