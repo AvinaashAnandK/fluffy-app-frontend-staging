@@ -14,10 +14,10 @@ const LandingFeatures = () => {
           <div className="flex flex-col justify-center space-y-8 text-center">
             <div className="space-y-2">
               <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-500">
-              Unlock AI's Potential with Ease
+              {"Unlock AI's Potential with Ease"}
               </h1>
               <p className="max-w-[600px] text-zinc-200 md:text-xl dark:text-zinc-100 mx-auto font-normal">
-              From complex problem-solving to seamless integration - Fluffy's features are designed to streamline your AI journey.
+              {"From complex problem-solving to seamless integration - Fluffy's features are designed to streamline your AI journey."}
               </p>
             </div>
             <div className="w-full max-w-full space-y-4 mx-auto">
@@ -74,7 +74,7 @@ const LandingFeatures = () => {
                 Your Cloud, Your Control
                 </h2>
                 <p className="text-zinc-200 dark:text-zinc-100 font-normal">
-                Deploy AI models where you want. Self-host or use Fluffy’s endpoints — it's your call.
+                {"Deploy AI models where you want. Self-host or use Fluffy’s endpoints — it's your call."}
                 </p>
                 </div>
                 <div className="flex flex-col items-center space-y-2 border-gray-800 p-4 rounded-lg">
