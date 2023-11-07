@@ -21,12 +21,21 @@ export const InfoModalFirstTime = () => {
 export const ApproachGenerated = () => {
     return ( 
         <div className="h-full p-10 flex flex-col items-center justify-center">
-            <div className="relative h-72 w-72">
-                Fluffy has some initial thoughts, it is refining those thoughts. 
+            <aside className="bg-black text-white p-6 rounded-lg w-full max-w-lg font-mono">
+            <div className="flex justify-between items-center">
+                <div className="flex space-x-2 text-red-500">
+                <div className="w-3 h-3 rounded-full bg-red-500" />
+                <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                <div className="w-3 h-3 rounded-full bg-green-500" />
+                </div>
+                <p className="text-sm">bash</p>
             </div>
-            <p className="text-muted-foreground text-sm text-center">
-
-            </p>
+            <div className="mt-4">
+                <p className="text-green-400">$ fluffy solve query</p>
+                <p className="text-white">generated inital thoughts</p>
+                <p className="text-green-400">$ fluffy breakdown query</p>
+            </div>
+            </aside>
         </div>
      );
 }
