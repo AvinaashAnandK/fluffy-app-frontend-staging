@@ -20,7 +20,7 @@ export const InfoModalFirstTime = () => {
 
 export const ApproachGenerated = () => {
     return ( 
-        <div className="h-full p-10 flex flex-col items-center justify-center">
+        <div className="h-full pt-2 p-10 flex flex-col items-center justify-center">
             <aside className="bg-black text-white p-6 rounded-lg w-full max-w-lg font-mono">
             <div className="flex justify-between items-center">
                 <div className="flex space-x-2 text-red-500">
@@ -28,12 +28,13 @@ export const ApproachGenerated = () => {
                 <div className="w-3 h-3 rounded-full bg-yellow-500" />
                 <div className="w-3 h-3 rounded-full bg-green-500" />
                 </div>
-                <p className="text-sm">bash</p>
+                <p className="text-sm">ask fluffy!</p>
             </div>
             <div className="mt-4">
                 <p className="text-green-400">$ fluffy solve query</p>
                 <p className="text-white">generated inital thoughts</p>
                 <p className="text-green-400">$ fluffy breakdown query</p>
+                <p className="text-white">refining the approach...</p>
             </div>
             </aside>
         </div>
