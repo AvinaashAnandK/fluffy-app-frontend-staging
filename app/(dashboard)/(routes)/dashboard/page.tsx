@@ -5,18 +5,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { set, useForm } from "react-hook-form";
 import axios from "axios";
 
-import ModelCard from "@/components/model-card";
+import ModelCard from "@/components/pageAskFluffy/model-card";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { MultiInput } from "@/components/ui/multilineinput";
 import { formSchema} from "./constants";
 import { Button } from "@/components/ui/button";
-import { Search, } from "lucide-react";
+import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { ApproachGenerated, InfoModalFirstTime } from "@/components/modals";
-import { Loader } from "@/components/loader";
+import { ApproachGenerated, InfoModalFirstTime } from "@/components/globalComponents/informationbanners";
+import { Loader } from "@/components/pageAskFluffy/loader";
 import { subtaskparse } from "@/lib/utils";
-import SubtaskCard from "@/components/subtask-card";
+import SubtaskCard from "@/components/pageAskFluffy/subtask-card";
 
 
 
@@ -105,7 +105,7 @@ export default function DashboardPage () {
         <div className="">
           <div className="flex flex-auto">
             {/* <MessageCircle className="h-8 w-8 mr-2" /> */}
-            <div className="text-2xl font-bold flex">
+            <div className="text-xl sm:text-2xl font-bold flex">
               Ask Fluffy!
             </div>
           </div>
@@ -119,7 +119,7 @@ export default function DashboardPage () {
                           <FormItem className="col-span-12 lg:col-span-11">
                             <FormControl className="m-0 p-2 lg:p-4">
                               <MultiInput 
-                                className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-trasparent bg-primary/5" 
+                                className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-trasparent bg-primary/10" 
                                 disabled={isLoading}
                                 placeholder="I work for a healthtech startup that is looking to venture into the medical 
 procedure tagging space. We want to automatically tag and classify videos of surgeries and other medical procedures to use downstream. 
@@ -140,7 +140,7 @@ procedure tagging space. We want to automatically tag and classify videos of sur
       </div>
       <div className="space-y-4 mt-4">
         {(isLoading || (!refinedApproachResponse && approachGenResponse !== null)) && (
-            <div className="p-8 rounded-lg w-full flex items-center justify-center bg-muted">
+            <div className="p-8 rounded-lg w-full flex items-center justify-center">
                 <Loader />
             </div>
         )}
@@ -148,7 +148,7 @@ procedure tagging space. We want to automatically tag and classify videos of sur
         {!isLoading && (
           <>
             {approachGenResponse === null && 
-              <div className="p-4 rounded-lg w-full h-full flex items-center justify-center bg-muted">
+              <div className="p-4 rounded-lg w-full h-full flex items-center justify-center">
                 <InfoModalFirstTime />
               </div>
             }

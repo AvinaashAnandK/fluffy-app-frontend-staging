@@ -14,12 +14,17 @@ const buttonVariants = cva(
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
           "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        outlinedark:
+          "border border-accent bg-accent hover:bg-background hover:text-accent-foreground",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
         premium: "bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 text-white hover:from-cyan-600 hover:to-purple-600",
         showCollapse:"hover:bg-blue-500/80 hover:text-white border-transparent text-white font-bold bg-blue-500",
+        playground: "bg-gradient-to-r from-teal-400 via-cyan-500 to-blue-500 text-white hover:from-teal-600 hover:to-blue-600",
+        repolistcard: "bg-customco6 text-white hover:bg-customco1/80 ",
+        plainpurple: "bg-customco6 text-white hover:bg-customco6/80 ",
       },
       size: {
         default: "h-10 px-4 py-2",

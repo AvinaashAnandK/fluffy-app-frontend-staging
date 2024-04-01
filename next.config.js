@@ -9,4 +9,7 @@ module.exports = {
     // !! WARN !!
     ignoreBuildErrors: true,
   },
+  experimental: {
+    serverActions: true,
+  },
 }

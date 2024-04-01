@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+
+model UserApiLimit {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String @unique
+  repoAddedCount Int @default(0)
+  chatsCreatedCount Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userType String   @default("FREE")
+}
+
+//[TO-DO] Storage for UserPreferences
+model UserPreference {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  coderOptions      String
+  fluffyResponseOptions String
+  languagesOptions  String[]
+}
+
+model Chat {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  createdAt   DateTime   @default(now())
+  userId      String
+  path        String
+  messages    Json[]
+  sharePath   String?
+  repoUrl     String
+  repoId      String
+  chatId      String   @unique
+  retrievedInfo Json[]
+  @@map("chats")
+}
+
+// type Message {
+//   id            String
+//   tool_call_id  String?
+//   createdAt     DateTime?  @default(now())
+//   content       String
+//   role          String     // 'system' | 'user' | 'assistant' | 'function' | 'data' | 'tool'
+//   name          String?
+//   function_call String?
+//   data          Json?
+//   tool_calls    Json?
+//   annotations   Json?
+//   sources       Json?
+//   related_queries Json?
+//   next_steps    Json?
+//   related_memory Json?
+//   ui            Json?
+// }

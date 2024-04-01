@@ -16,7 +16,8 @@ const badgeVariants = cva(
           "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
         outline: "text-foreground",
         code: "border-transparent bg-code text-code-foreground",
-        stepCount:"border-transparent text-white bg-purple-700"
+        stepCount:"border-transparent text-white bg-purple-700",
+        repolistcard:"text-customco2"
       },
     },
     defaultVariants: {

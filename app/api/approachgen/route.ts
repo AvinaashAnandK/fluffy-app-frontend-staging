@@ -26,7 +26,7 @@ export async function POST(req: Request) {
         };
 
         // Make the POST request using axios
-        const response = await axios.post('http://20.219.193.181/genapproach', data, { headers: headers });
+        const response = await axios.post('http://20.219.193.181/genapproachtest', data, { headers: headers });
 
         // Return the response from the external API
         return NextResponse.json(response.data);
