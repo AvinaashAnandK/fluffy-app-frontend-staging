@@ -10,13 +10,13 @@ const FluffyResponseProps = () => {
     const { fluffyResponseOptions, setFluffyResponseOptions } = useUserPreferences();
     const { toast } = useToast(); // Assuming you've set up your toast provider
 
-    useEffect(() => {
-        if (fluffyResponseOptions !== '') {
-            toast({
-                description: `Fluffy response option changed to: ${fluffyResponseOptions}`,
-            });
-        }
-    }, [fluffyResponseOptions, toast]);
+    // useEffect(() => {
+    //     if (fluffyResponseOptions !== '') {
+    //         toast({
+    //             description: `Fluffy response option changed to: ${fluffyResponseOptions}`,
+    //         });
+    //     }
+    // }, [fluffyResponseOptions, toast]);
 
     const handleKnowRepoChange = (value: string) => {
         setFluffyResponseOptions(value);

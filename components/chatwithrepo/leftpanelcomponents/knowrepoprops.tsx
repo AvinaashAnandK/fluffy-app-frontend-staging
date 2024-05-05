@@ -10,13 +10,13 @@ const KnowTheRepoProps = () => {
     const { knowRepoOptions, setKnowRepoOptions } = useUserPreferences();
     const { toast } = useToast(); // Assuming you've set up your toast provider
 
-    useEffect(() => {
-        if (knowRepoOptions !== '') {
-            toast({
-                description: `Know The Repo option changed to: ${knowRepoOptions}`,
-            });
-        }
-    }, [knowRepoOptions, toast]);
+    // useEffect(() => {
+    //     if (knowRepoOptions !== '') {
+    //         toast({
+    //             description: `Know The Repo option changed to: ${knowRepoOptions}`,
+    //         });
+    //     }
+    // }, [knowRepoOptions, toast]);
 
     const handleKnowRepoChange = (value: string) => {
         setKnowRepoOptions(value);

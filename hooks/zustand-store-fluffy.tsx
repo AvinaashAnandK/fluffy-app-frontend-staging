@@ -26,13 +26,25 @@ interface UserPreferencesState {
 }
 
 interface LoadedRepoState {
-  loadedRepoUrl: string;
-  setLoadedRepoUrl: (value: string) => void;
+  repoUrl: string;
+  repoFullName: string;
+  repoOrgName: string;
+  repoName: string;
+  setRepoUrl: (value: string) => void;
+  setRepoFullName: (value: string) => void;
+  setRepoOrgName: (value: string) => void;
+  setRepoName: (value: string) => void;
 }
 
 export const useLoadedRepo = create<LoadedRepoState>((set) => ({
-  loadedRepoUrl: '',
-  setLoadedRepoUrl: (value) => set({ loadedRepoUrl: value }),
+  repoUrl: '',
+  repoFullName: '',
+  repoOrgName: '',
+  repoName: '',
+  setRepoUrl: (value: string) => set({ repoUrl: value }),
+  setRepoFullName: (value: string) => set({ repoFullName: value }),
+  setRepoOrgName: (value: string) => set({ repoOrgName: value }),
+  setRepoName: (value: string) => set({ repoName: value }),
 }));
 
 export const useUserPreferences = create<UserPreferencesState>((set) => ({
@@ -61,48 +73,3 @@ export const useProModal = create<useProModalStore>((set) => ({
     onClose: () => set({ isOpen: false})
 }));
 
-interface CodeSource {
-  dependancy_count: string;
-  file_path: string;
-}
-
-interface DocumentationSource {
-  doc_filename: string;
-  doc_path: string;
-  doc_source_directory: string;
-  doc_type: string; // Assuming these are the only two types
-}
-
-interface DownloadSource {
-  download_description: string;
-  download_instruction: string;
-  download_source: string;
-  download_type: string; // Assuming these are the only two types
-}
-
-interface CurrentChatMetadataState {
-  repoId: string; // Assuming repoId is a string
-  chatId: string; // Assuming chatId is a string
-  codeSources: CodeSource[];
-  documentationSourcesList: DocumentationSource[];
-  downloadSources: DownloadSource[];
-  setRepoId: (value: string) => void;
-  setChatId: (value: string) => void;
-  setCodeSources: (value: CodeSource[]) => void;
-  setDocumentationSourcesList: (value: DocumentationSource[]) => void;
-  setDownloadSources: (value: DownloadSource[]) => void;
-}
-
-// Create the Zustand store for CurrentChatMetadata
-export const useCurrentChatMetadata = create<CurrentChatMetadataState>((set) => ({
-  repoId: '',
-  chatId: '',
-  codeSources: [],
-  documentationSourcesList: [],
-  downloadSources: [],
-  setRepoId: (repoId) => set({ repoId }),
-  setChatId: (chatId) => set({ chatId }),
-  setCodeSources: (codeSources) => set({ codeSources }),
-  setDocumentationSourcesList: (documentationSourcesList) => set({ documentationSourcesList }),
-  setDownloadSources: (downloadSources) => set({ downloadSources }),
-}));

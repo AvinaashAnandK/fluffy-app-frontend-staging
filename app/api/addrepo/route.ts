@@ -63,7 +63,7 @@ export async function POST(req: Request) {
         let config = {
             method: 'post',
             maxBodyLength: Infinity,
-            url: 'http://20.193.139.202:80/ingestrepo',
+            url: 'http://20.197.51.194:80/ingestrepo',
             headers: { 
               'Content-Type': 'application/json'
             },

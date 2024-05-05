@@ -11,13 +11,10 @@ export async function GET(req: Request) {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        const response = await axios.get('http://20.193.139.202:80/bulkfetchrepolist');
-
-        // console.log(response)
+        const response = await axios.get('http://20.197.51.194:80/bulkfetchrepolist');
         return NextResponse.json(response.data);
 
     } catch (error) {
-        // console.log("Error in fetching ingested repo list", error);
         return new NextResponse("Something went wrong: Unable to fetch ingested repo list", { status: 500 });
     }
 }

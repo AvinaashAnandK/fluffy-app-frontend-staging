@@ -10,13 +10,13 @@ const LanguageOptionsProps = () => {
     const { languagesOptions, setLanguagesOptions } = useUserPreferences();
     const { toast } = useToast(); // Assuming you've set up your toast provider
 
-    useEffect(() => {
-        if (languagesOptions.length > 0) {
-            toast({
-                description: `Coder's language list changed to: ${languagesOptions}`,
-            });
-        }
-    }, [languagesOptions, toast]);
+    // useEffect(() => {
+    //     if (languagesOptions.length > 0) {
+    //         toast({
+    //             description: `Coder's language list changed to: ${languagesOptions}`,
+    //         });
+    //     }
+    // }, [languagesOptions, toast]);
 
     const handleLanguageOptionClick = (value: string) => {
         const updatedLanguagesOptions = languagesOptions.includes(value)

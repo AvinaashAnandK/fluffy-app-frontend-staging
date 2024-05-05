@@ -10,13 +10,13 @@ const CoderProps = () => {
     const { coderOptions, setCoderOptions } = useUserPreferences();
     const { toast } = useToast(); // Assuming you've set up your toast provider
 
-    useEffect(() => {
-        if (coderOptions !== '') {
-            toast({
-                description: `Know The Coder option changed to: ${coderOptions}`,
-            });
-        }
-    }, [coderOptions, toast]);
+    // useEffect(() => {
+    //     if (coderOptions !== '') {
+    //         toast({
+    //             description: `Know The Coder option changed to: ${coderOptions}`,
+    //         });
+    //     }
+    // }, [coderOptions, toast]);
 
     const handleKnowRepoChange = (value: string) => {
         setCoderOptions(value);

@@ -1,11 +1,10 @@
 import { BugOff, EqualNot, FileQuestion, MessageCircle, Shrub, Sprout, Trees, View, GitBranch } from "lucide-react";
 import { PiDotsNine, PiDotsSix, PiDotsThree, PiGitDiff, PiLeafLight, PiShootingStar } from "react-icons/pi";
 import { WiSnowflakeCold, WiStars,  } from "react-icons/wi";
-import { type Message } from "ai/react";
 
 export const MAX_COUNTS = {
     FREE: {
-      CHAT: 10,
+      CHAT: 5,
       REPO: 2,
     },
     BETA: {
@@ -18,14 +17,20 @@ export const MAX_COUNTS = {
     },
   };
   
-  export const EMAIL_DOMAIN_USER_TYPES: { [key: string]: string } = {
-    // Domain-based mappings
-    'neodocs.in': 'ENT',
-    'iima.ac.in': 'ENT',
-    
+export const EMAIL_USER_TYPES: { [key: string]: string } = {
     // Specific email address mappings
     'avinaash96@gmail.com': 'BETA',
     'lodhapratik9@gmail.com': 'ENT',
+};
+
+export const DOMAIN_USER_TYPES: { [key: string]: string } = {
+  // Domain-based mappings
+  'neodocs.in': 'ENT',
+  'iima.ac.in': 'ENT',
+  
+  // Specific email address mappings
+  'avinaash96@gmail.com': 'BETA',
+  'lodhapratik9@gmail.com': 'ENT',
 };
 
 export const DEFAULT_USER_TYPE = 'FREE';
@@ -192,50 +197,4 @@ export const LANGUAGES_OPTIONS = [
   },
 ];
 
-export interface RepoList {
-  url: string
-  name: string
-}
 
-export const REPO_LIST: RepoList[] = [
-  {
-    url: "https://github.com/openai/gpt-3.5",
-    name: "openai/gpt-3.5",
-  },
-  {
-    url: "https://github.com/facebook/react",
-    name: "facebook/react",
-  },
-  {
-    url: "https://github.com/tensorflow/tensorflow",
-    name: "tensorflow/tensorflow",
-  },
-  {
-    url: "https://github.com/vuejs/vue",
-    name: "vuejs/vue",
-  },
-  {
-    url: "https://github.com/microsoft/TypeScript",
-    name: "microsoft/TypeScript",
-  },
-  {
-    url: "https://github.com/django/django",
-    name: "django/django",
-  },
-  {
-    url: "https://github.com/expressjs/express",
-    name: "expressjs/express",
-  },
-  {
-    url: "https://github.com/angular/angular",
-    name: "angular/angular",
-  },
-  {
-    url: "https://github.com/nodejs/node",
-    name: "nodejs/node",
-  },
-  {
-    url: "https://github.com/git/git",
-    name: "git/git",
-  },
-];

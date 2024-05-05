@@ -15,13 +15,13 @@ const ChatRepoTasksProps = () => {
     const { chatRepoTasks, setChatRepoTasks } = useUserPreferences();
     const { toast } = useToast(); // Assuming you've set up your toast provider
 
-    useEffect(() => {
-        if (chatRepoTasks !== '') {
-            toast({
-                description: `Repo Task Option option changed to: ${chatRepoTasks}`,
-            });
-        }
-    }, [chatRepoTasks, toast]);
+    // useEffect(() => {
+    //     if (chatRepoTasks !== '') {
+    //         toast({
+    //             description: `Repo Task Option option changed to: ${chatRepoTasks}`,
+    //         });
+    //     }
+    // }, [chatRepoTasks, toast]);
 
     const handleKnowRepoChange = (value: string) => {
         setChatRepoTasks(value);

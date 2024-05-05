@@ -2,7 +2,7 @@ import BreadCrumb from "@/components/globalComponents/bread-crumb";
 import ModelPlayground from "@/components/model-playground";
 import RepoListCard from "@/components/pageRepoPlayground/pageRepoList/repo-list-card";
 
-import {RepoChatLayout} from "@/components/chatwithrepo/repochat";
+import {RepoChatLayout} from "@/components/chatwithrepo/chatwithrepoRepoChatLayout";
 import { type Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
 import { fetchChat } from "@/lib/chatoperations";

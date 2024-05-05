@@ -8,6 +8,7 @@ import { ModalProvider } from '@/components/globalModals/modal-provider'
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { RepoChatHistoryProvider } from '@/lib/hooks/use-repochathistory'
+import { AI } from './action';
 
 const fontMain = Lato({
   weight: "400",
@@ -30,12 +31,14 @@ export default function RootLayout({
       <body className={cn("bg-black",fontMain.className)}>
       <ModalProvider/>
           <ThemeProvider attribute='class' defaultTheme='dark'>
+          <AI>
           <RepoChatHistoryProvider>
           <TooltipProvider>
             {children}
           </TooltipProvider>
           <Toaster/>
           </RepoChatHistoryProvider>
+          </AI>
           </ThemeProvider>
         </body>
       </html>
