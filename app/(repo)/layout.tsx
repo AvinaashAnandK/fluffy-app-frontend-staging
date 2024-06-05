@@ -1,6 +1,5 @@
 import { Navbar } from "@/components/globalComponents/navbar"
 import { Sidebar } from "@/components/globalComponents/sidebar"
-import { RepoChatHistoryProvider } from "@/lib/hooks/use-repochathistory";
 
 const DashboardLayout = async ({
     children 
@@ -17,9 +16,7 @@ const DashboardLayout = async ({
             </div>
             <main className="p-2 md:pl-20 pt-16 h-full bg-black">
                 <div className="">
-                <RepoChatHistoryProvider>
                     {children}
-                </RepoChatHistoryProvider>
                 </div>
             </main>
         </div>

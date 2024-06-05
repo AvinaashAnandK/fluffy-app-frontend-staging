@@ -8,15 +8,15 @@ export const Sidebar = () => {
     const router = useRouter();
     const routes = [
         {
-            icon:MessageCircle,
-            href:"/dashboard",
-            label:"Ask Fluffy!",
-            pro: false
-        },
-        {
             icon:PackageOpen,
             href:"/playground",
             label:"Repo Playground",
+            pro: false
+        },
+        {
+            icon:MessageCircle,
+            href:"/dashboard",
+            label:"Ask Fluffy!",
             pro: false
         },
         {
@@ -44,7 +44,7 @@ export const Sidebar = () => {
     }
 
     return ( 
-    <div className="space-y-4 flex flex-col h-full text-primary bg-secondary border-r border-primary/10">
+    <div className="space-y-4 flex flex-col h-full text-primary bg-navsidebar/80  ">
         <div className="p-3 flex-1 flex justify-center">
             <div className="space-y-2">
                 {
@@ -52,7 +52,7 @@ export const Sidebar = () => {
                         <div 
                             onClick={() => onNavigate(route.href, route.pro)}
                             key = {route.href}
-                            className={cn("text-muted-foreground text-xs group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-primary hover:bg-primary/10 rounded-lg transition",
+                            className={cn("text-muted-foreground text-xs group flex p-2 w-full justify-start font-medium cursor-pointer hover:text-primary hover:bg-primary/10 rounded-lg transition",
                             pathname.startsWith(route.href) && "bg-primary/10 text-primary"
                             )}>
                         <div className="flex flex-col gap-y-2 items-center flex-1 text-center">

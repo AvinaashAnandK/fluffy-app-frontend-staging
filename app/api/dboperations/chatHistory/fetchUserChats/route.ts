@@ -19,7 +19,6 @@ export async function GET(req: NextRequest) {
     if (chats.length === 0) {
       return new NextResponse(JSON.stringify({ message: 'No chats found for the provided user ID.' }), { status: 404, headers: { 'Content-Type': 'application/json' } });
     }
-
     return new NextResponse(JSON.stringify(chats), { status: 200, headers: { 'Content-Type': 'application/json' } });
   } catch (error) {
     console.error('Error in fetchUserChats API:', error);

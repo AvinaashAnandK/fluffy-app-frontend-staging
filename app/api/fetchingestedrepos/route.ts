@@ -11,7 +11,7 @@ export async function GET(req: Request) {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        const response = await axios.get('http://20.197.51.194:80/bulkfetchrepolist');
+        const response = await axios.get(`${process.env.REPO_INGESTION_BOX_ENDPOINT}/bulkfetchrepolist`);
         return NextResponse.json(response.data);
 
     } catch (error) {

@@ -18,6 +18,7 @@ export const ModalProvider = () => {
     return (
         <>
             <AddRepoModal />
+            <ProModal />
         </>
     )
 }

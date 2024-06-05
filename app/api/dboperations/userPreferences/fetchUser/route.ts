@@ -1,3 +1,4 @@
+// api/dboperations/userPreferences/fetchUser/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import clientPromise from '@/lib/mongodb';
 

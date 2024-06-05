@@ -37,7 +37,7 @@ const LandingHero = () => {
             Supercharge your applications with AI models.
         </div>
         <div className="">
-            <Link href={isSignedIn ? "/dashboard": "/sign-up"}>
+            <Link href={isSignedIn ? "/playground": "/sign-up"}>
                 <Button variant="premium" className="md:text-lg p-4 md:p-6 rounded-full font-semibold">
                     Try Fluffy for Free!
                 </Button>

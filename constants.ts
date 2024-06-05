@@ -60,15 +60,8 @@ export const CHAT_REPO_TASKS = [
     icon: View,
     prompt: "",
     placeholderText1: "Enter your question to understand repo better.",
-  },
-  {
-    key: "solve",
-    title: "Answer mode",
-    description: "Get answers to your questions.",
-    icon: FileQuestion,
-    prompt: "",
-    placeholderText1: "Enter your expected outcome.",
-    placeholderText2: "Enter the edge-cases / conditions you want to address.",
+    promptAugment1: "### User Query ###",
+    visblePromptAugment1: "User Query"
   },
   {
     key: "debug",
@@ -78,6 +71,23 @@ export const CHAT_REPO_TASKS = [
     prompt: "",
     placeholderText1: "Enter your code snippet.",
     placeholderText2: "Paste / describe the error.",
+    promptAugment1: "### Code snippet used by user ###",
+    promptAugment2: "### Error Description ###",
+    visblePromptAugment1: "Code Snippet",
+    visblePromptAugment2: "Error Description"
+  },
+  {
+    key: "solve",
+    title: "Answer mode",
+    description: "Get answers to your questions.",
+    icon: FileQuestion,
+    prompt: "",
+    placeholderText1: "Enter your expected outcome.",
+    placeholderText2: "Enter the edge-cases / conditions you want to address.",
+    promptAugment1: "### User Query ###",
+    promptAugment2: "### Edge-cases and Conditions that need to be addressed in the code ###",
+    visblePromptAugment1: "User Query",
+    visblePromptAugment2: "Edge-cases and Conditions"
   },
   {
     key: "verify",
@@ -88,6 +98,12 @@ export const CHAT_REPO_TASKS = [
     placeholderText1: "Enter your code snippet.",
     placeholderText2: "Enter the expected outcome.",
     placeholderText3: "Enter the actual outcome.",
+    promptAugment1: "### Code snippet used by user ###",
+    promptAugment2: "### Expected Outcome ###",
+    promptAugment3: "### Actual Outcome / Error ###",
+    visblePromptAugment1: "Code Snippet",
+    visblePromptAugment2: "Expected Outcome",
+    visblePromptAugment3: "Actual Outcome / Error"
   },
 ];
 

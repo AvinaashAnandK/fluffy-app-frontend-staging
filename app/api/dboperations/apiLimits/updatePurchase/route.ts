@@ -1,14 +1,7 @@
 // api/dboperations/apiLimits/updatePurchase/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import clientPromise from '@/lib/mongodb';
-
-interface UpdatePurchaseRequest {
-  userId: string;
-  purchaseHistory: any[];
-  repoLimit: number;
-  chatsLimit: number;
-  userType: string;
-}
+import { UpdatePurchaseRequest } from '@/lib/typesserver';
 
 export async function POST(req: NextRequest) {
   const body = await req.json() as UpdatePurchaseRequest;

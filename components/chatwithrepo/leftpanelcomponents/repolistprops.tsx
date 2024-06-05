@@ -48,17 +48,11 @@ const fetchRepos = async (): Promise<RawRepoList[]> => {
 
   const llms: RepoList[] = [
     {
-        repoUrl: "https://fluffystack.com/gpt4",
+        repoUrl: "https://fluffystack.com/llm",
         repoOrgName: "Fluffy",
-        repoName: "GPT4",
-        repoFullName: "fluffy/gpt4",
-    },
-    {
-        repoUrl: "https://fluffystack.com/commandrplus",
-        repoOrgName: "Fluffy",
-        repoName: "commandrplus",
-        repoFullName: "fluffy/commandrplus",
-    },
+        repoName: "LLM",
+        repoFullName: "fluffy/llm",
+    }
 ];
 
   
@@ -139,7 +133,7 @@ const RepoListProps = ({ repoUrl }: { repoUrl?: string }) => {
                 <Button variant="outline" role="combobox" aria-label="Load a preset..." aria-expanded={open} className="flex-1 justify-between rounded-lg md:max-w-[300px] lg:max-w-[400px]">
                 {
                     selectedRepoList ? 
-                        (selectedRepoList.repoFullName === 'fluffy/gpt4' ? 'GPT4' :
+                        (selectedRepoList.repoFullName === 'fluffy/llm' ? 'Chat with LLM' :
                         selectedRepoList.repoFullName === 'fluffy/commandrplus' ? 'Cohere Command R+' :
                         selectedRepoList.repoFullName) 
                         : "Load a repo..."
@@ -155,12 +149,12 @@ const RepoListProps = ({ repoUrl }: { repoUrl?: string }) => {
                     </CommandEmpty>
                     <CommandGroup>
                     {
-                            repoList.slice(0, 2).map((repo) => (
+                            repoList.slice(0, 1).map((repo) => (
                                 <CommandItem key={repo.repoUrl} onSelect={() => {
                                     setSelectedRepoList(repo);
                                     setOpen(false);
                                 }}>
-                                    {repo.repoFullName === 'fluffy/gpt4' ? 'Talk to GPT4' : 'Talk to Cohere Command R+'}
+                                    {'Chat with LLM'}
                                     <CheckIcon className={cn("ml-auto h-4 w-4", selectedRepoList?.repoUrl === repo.repoUrl ? "opacity-100" : "opacity-0")}/>
                                 </CommandItem>
                             ))
@@ -171,7 +165,7 @@ const RepoListProps = ({ repoUrl }: { repoUrl?: string }) => {
                     </CommandGroup>
                     <CommandGroup heading="Repo List">
                     {
-                        repoList.slice(2).map((repo) => (
+                        repoList.slice(1).map((repo) => (
                             <CommandItem key={repo.repoUrl} onSelect={() => {
                                 setSelectedRepoList(repo);
                                 setOpen(false);

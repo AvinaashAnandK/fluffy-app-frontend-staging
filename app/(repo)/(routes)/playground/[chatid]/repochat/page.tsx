@@ -1,7 +1,3 @@
-import BreadCrumb from "@/components/globalComponents/bread-crumb";
-import ModelPlayground from "@/components/model-playground";
-import RepoListCard from "@/components/pageRepoPlayground/pageRepoList/repo-list-card";
-
 import { type Metadata } from 'next'
 import {RepoChatLayout} from "@/components/chatwithrepo/chatwithrepoRepoChatLayout";
 

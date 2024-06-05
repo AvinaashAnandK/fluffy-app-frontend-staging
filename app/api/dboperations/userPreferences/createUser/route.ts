@@ -1,8 +1,9 @@
+// api/dboperations/userPreferences/createUser/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import clientPromise from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 
-interface UserPreferences {
+interface UserPreferencesMongo {
     _id?: ObjectId;
     userId: string;
     createdAt?: Date;
@@ -12,7 +13,7 @@ interface UserPreferences {
 }
 
 export async function POST(req: NextRequest) {
-    const { userId, coderOptions, fluffyResponseOptions, languagesOptions } = await req.json() as UserPreferences;
+    const { userId, coderOptions, fluffyResponseOptions, languagesOptions } = await req.json() as UserPreferencesMongo;
 
     if (!userId || !coderOptions || !fluffyResponseOptions || !languagesOptions) {
         return new NextResponse(JSON.stringify({ error: "Missing required fields" }), {
@@ -25,7 +26,7 @@ export async function POST(req: NextRequest) {
       const client = await clientPromise;
       const db = client.db("userData");
 
-      const newEntry: UserPreferences = {
+      const newEntry: UserPreferencesMongo = {
         userId,
         createdAt: new Date(),
         coderOptions,

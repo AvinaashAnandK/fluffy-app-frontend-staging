@@ -12,6 +12,7 @@ import { BsMarkdown } from "react-icons/bs";
 import { IoGlobeOutline } from "react-icons/io5";
 
 import { BentoGrid, BentoGridItem, BentoGridItemDownloads } from '@/components/ui/bento-grid';
+import { GrResources } from 'react-icons/gr';
 
 // 2. Define the 'SearchResult' interface with properties for 'favicon', 'link', and 'title'
 export interface SearchResult {
@@ -235,8 +236,8 @@ const SearchResultsComponent = ({ searchResults }: { searchResults: RetreivedSou
                 <div className='flex'>
                     <AlertDialog>
                         <AlertDialogTrigger asChild>
-                            <Button variant="outline" className='text-gradhighlight1 hover:text-gradhighlight1/85'>
-                                <DownloadSimple className='w-5 h-5 mr-2 text-gradhighlight1'/>
+                            <Button variant="outline" className='text-gradhighlight3 hover:text-gradhighlight3/85'>
+                                <GrResources className='w-5 h-5 mr-2 text-gradhighlight3'/>
                                 Code Sources
                             </Button>
                         </AlertDialogTrigger>
@@ -371,7 +372,7 @@ const SearchResultsComponent = ({ searchResults }: { searchResults: RetreivedSou
                 ) : (
                         <div className="p-2 w-full">
                             <div className="flex items-center space-x-2 bg-card/50 p-1 rounded-lg h-full">
-                                <DownloadSourcesComponent/>
+                                {/* <DownloadSourcesComponent/> */}
                                 <CodeSourcesComponent/>
                                 <DocumentationSourcesComponent/>
                             </div>

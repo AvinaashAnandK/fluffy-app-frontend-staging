@@ -5,7 +5,6 @@ const {
   default: flattenColorPalette,
 } = require("tailwindcss/lib/util/flattenColorPalette");
 
-
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
@@ -14,7 +13,7 @@ module.exports = {
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
-	],
+  ],
   theme: {
     container: {
       center: true,
@@ -56,6 +55,35 @@ module.exports = {
         chatlistborder: "#242635",
         tagsbg: "#FF6D6B",
         tagstext: "#3A3B3A",
+        navsidebar: "#1c222f",
+        blue: {whisper: "#00FFFF"},
+        magenta: {vividMagenta: "#FF0099"},
+        gradient1left: 'rgba(11, 35, 30, 0.5)',
+        gradient1right: 'rgba(10, 33, 40, 0.5)',
+        gradient2left: 'rgba(13, 33, 32, 0.5)',
+        gradient2right: 'rgba(22, 35, 24, 0.5)',
+        gradient3left: 'rgba(23, 21, 49, 0.5)',
+        gradient3right: 'rgba(12, 35, 30, 0.5)',
+        gradient4left: 'rgba(61, 34, 13, 0.5)',
+        gradient4right: 'rgba(107, 62, 27, 0.5)',
+        gradient5left: 'rgba(52, 46, 12, 0.5)',
+        gradient5right: 'rgba(79, 61, 18, 0.5)',
+        gradient6left: 'rgba(25, 28, 41, 0.5)',
+        gradient6right: 'rgba(42, 47, 74, 0.5)',
+        gradient7left: 'rgba(27, 20, 51, 0.5)',
+        gradient7right: 'rgba(16, 61, 74, 0.5)',
+        gradient8left: 'rgba(36, 32, 22, 0.5)',
+        gradient8right: 'rgba(10, 33, 40, 0.5)',
+        gradient9left: 'rgba(61, 34, 13, 0.5)',
+        gradient9right: 'rgba(15, 43, 30, 0.5)',
+        gradient10left: 'rgba(107, 62, 27, 0.5)',
+        gradient10right: 'rgba(18, 66, 53, 0.5)',
+        gradient11left: 'rgba(0, 102, 102, 0.5)',
+        gradient11right: 'rgba(15, 43, 30, 0.5)',
+        gradient12left: 'rgba(15, 43, 30, 0.5)',
+        gradient12right: 'rgba(27, 20, 51, 0.5)',
+        gradient13left: 'rgba(61, 34, 13, 0.5)',
+        gradient13right: 'rgba(36, 32, 22, 0.5)',
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -106,39 +134,39 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate"), // Existing plugin
-  // Your additional plugins
-  function addVariablesForColors({ addBase, theme }) {
-    let allColors = flattenColorPalette(theme("colors"));
-    let newVars = Object.fromEntries(
-      Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
-    );
+  plugins: [
+    require("tailwindcss-animate"),
+    function addVariablesForColors({ addBase, theme }) {
+      let allColors = flattenColorPalette(theme("colors"));
+      let newVars = Object.fromEntries(
+        Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
+      );
 
-    addBase({
-      ":root": newVars,
-    });
-  },
-  function ({ matchUtilities, theme }) {
-    matchUtilities(
-      {
-        "bg-grid": (value) => ({
-          backgroundImage: `url("${svgToDataUri(
-            `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="${value}"><path d="M0 .5H31.5V32"/></svg>`
-          )}")`,
-        }),
-        "bg-grid-small": (value) => ({
-          backgroundImage: `url("${svgToDataUri(
-            `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="8" height="8" fill="none" stroke="${value}"><path d="M0 .5H31.5V32"/></svg>`
-          )}")`,
-        }),
-        "bg-dot": (value) => ({
-          backgroundImage: `url("${svgToDataUri(
-            `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="none"><circle fill="${value}" id="pattern-circle" cx="10" cy="10" r="1.6257413380501518"></circle></svg>`
-          )}")`,
-        }),
-      },
-      { values: flattenColorPalette(theme("backgroundColor")), type: "color" }
-    );
-  },
-],
-}
+      addBase({
+        ":root": newVars,
+      });
+    },
+    function ({ matchUtilities, theme }) {
+      matchUtilities(
+        {
+          "bg-grid": (value) => ({
+            backgroundImage: `url("${svgToDataUri(
+              `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="${value}"><path d="M0 .5H31.5V32"/></svg>`
+            )}")`,
+          }),
+          "bg-grid-small": (value) => ({
+            backgroundImage: `url("${svgToDataUri(
+              `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="8" height="8" fill="none" stroke="${value}"><path d="M0 .5H31.5V32"/></svg>`
+            )}")`,
+          }),
+          "bg-dot": (value) => ({
+            backgroundImage: `url("${svgToDataUri(
+              `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="none"><circle fill="${value}" id="pattern-circle" cx="10" cy="10" r="1.6257413380501518"></circle></svg>`
+            )}")`,
+          }),
+        },
+        { values: flattenColorPalette(theme("backgroundColor")), type: "color" }
+      );
+    },
+  ],
+};

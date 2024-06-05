@@ -1,63 +1,45 @@
 // api/dboperations/chatHistory/createChat/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import clientPromise from '@/lib/mongodb';
-
-interface Message {
-  id: string;
-  userMessage: string;
-  llmResponse: string;
-  sources: any;
-  createdAt: string;
-  conversationalHistory: string;
-  linkedUserChats: string[];
-  linkedOrgChats: string[];
-  linkedCommunityChats: string[];
-  webSources: any[];
-  fluffyThoughts: any;
-  tags: string[];
-}
-
-interface Chat {
-  chat_id: string;
-  repo_id: string;
-  uniqueId?: string;
-  repo_url: string;
-  repo_name: string;
-  title: string;
-  shortDescription: string;
-  longDescription: string;
-  createdAt: string;
-  lastUpdatedAt: string;
-  userId: string;
-  path: string;
-  sharePath: string;
-  shareSetting: string;
-  messages: Message[];
-  includeChatInSearch: boolean;
-}
+import { Chat } from "@/lib/typesserver";
 
 export async function POST(req: NextRequest) {
-  const { chat_id, repo_id, ...chatInfo } = await req.json() as Chat;
-  const uniqueId = `${chat_id}${repo_id}`;
+  const chatInfo: Chat = await req.json();
+
   const dbClient = await clientPromise;
-  const db = dbClient.db("repoChat");  
-  const chatHistory = db.collection("chatHistory"); 
+  const db = dbClient.db("repoChat");
+  const chatHistory = db.collection("chatHistory");
 
   try {
-    const existingChat = await chatHistory.findOne({ uniqueId: uniqueId });
-    if (existingChat) {
-      return new NextResponse(JSON.stringify({ message: 'Chat already exists.' }), { status: 409, headers: { 'Content-Type': 'application/json' } });
-    }
+    // Check if the chat already exists
+    const existingChat = await chatHistory.findOne({ uniqueId: chatInfo.uniqueId });
 
-    const newChat = {
-      ...chatInfo,
-      uniqueId,
-      createdAt: new Date().toISOString(),
-      lastUpdatedAt: new Date().toISOString()
-    };
-    await chatHistory.insertOne(newChat);
-    return new NextResponse(JSON.stringify({ message: 'Chat saved successfully.' }), { status: 201, headers: { 'Content-Type': 'application/json' } });
-  } catch (e) {
-    return new NextResponse(JSON.stringify({ message: 'Chat could not be saved.', error: e }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+    if (existingChat) {
+      // If the chat exists, update only the specified fields
+      const result = await chatHistory.updateOne(
+        { uniqueId: chatInfo.uniqueId },
+        {
+          $set: {
+            messages: chatInfo.messages,
+            embedText: chatInfo.embedText,
+            shareSettings: chatInfo.shareSettings,
+            lastUpdatedAt: new Date().toISOString()
+          }
+        }
+      );
+
+      if (result.modifiedCount === 0) {
+        return new NextResponse(JSON.stringify({ message: 'No update was made, the provided data may be identical to the existing data.' }), { status: 304, headers: { 'Content-Type': 'application/json' } });
+      }
+
+      return new NextResponse(JSON.stringify({ message: 'Chat updated successfully.' }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    } else {
+      // If the chat does not exist, insert it as a new document
+      await chatHistory.insertOne(chatInfo);
+      return new NextResponse(JSON.stringify({ message: 'Chat created successfully.' }), { status: 201, headers: { 'Content-Type': 'application/json' } });
+    }
+  } catch (error) {
+    console.error('Error handling chat operation:', error);
+    return new NextResponse(JSON.stringify({ message: 'An error occurred during the chat operation.', error }), { status: 500, headers: { 'Content-Type': 'application/json' } });
   }
 }

@@ -26,7 +26,7 @@ export async function POST(req: Request) {
         console.log("Constructing the payload for refined approach")
         console.log(data)
 
-        const response = await axios.post('http://20.219.193.181/refapproachtest', data, { headers: headers });
+        const response = await axios.post(`${process.env.ASKFLUFFY_BOX_ENDPOINT}/refapproachtest`, data, { headers: headers });
         console.log(response)
         return NextResponse.json(response.data);
 

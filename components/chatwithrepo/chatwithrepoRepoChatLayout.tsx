@@ -1,46 +1,35 @@
 "use client";
 
-// import { RepoChatHistoryMobile } from './chathistorycomponents/repochathistory-mobile';
-// import { ChatHistory } from './chathistorycomponents/chat-history';
-// import { RepoChatHistoryToggle } from './chathistorycomponents/repochathistory-toggle';
-
-import RepoListProps from "@/components/chatwithrepo/leftpanelcomponents/repolistprops";
-
-import UserPreferencesChat from "@/components/chatwithrepo/chatwithrepoPreferencesPanel";
 import { BsArrowBarLeft, BsArrowBarRight  } from "react-icons/bs";
-import { Button } from "@/components/ui/button";
-
+import RepoListProps from "@/components/chatwithrepo/leftpanelcomponents/repolistprops";
+import ServiceListProps from "@/components/chatwithrepo/leftpanelcomponents/servicelistprops";
+import UserPreferencesChat from "@/components/chatwithrepo/chatwithrepoPreferencesPanel";
 import { RepoChat } from '@/components/chatwithrepo/chatwithrepoChatPanel';
-
-import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { repoIdExtractor } from '@/lib/utils';
-import { type Message } from 'ai/react'
-import { fetchChat } from '@/lib/chatoperations';
+import { useUserPreferences } from '@/hooks/zustand-store-fluffy';
+import ChatHistory from "./leftpanelcomponents/chathistory";
+import { Chat, Message } from "@/lib/typesserver";
+import { fetchChat } from "@/lib/mongodbcalls";
 
 export interface ChatProps extends React.ComponentProps<'div'> {
-  chatId: string
-  repoId?: string
+  chatId: string;
+  repoId?: string;
+}
+interface CacheEntry {
+  messages: Message[];
+  timestamp: number;
 }
 
 export function RepoChatLayout({ chatId, repoId: initialRepoId }: ChatProps) {
   const { userId } = useAuth();
   const [repoId, setRepoId] = useState<string | undefined>(initialRepoId);
-  const [initialMessages, setInitialMessages] = useState<Message[]>([]);
-  const [isPreferencesVisible, setIsPreferencesVisible] = useState(true);
-  
-  useEffect(() => {
-    const fetchData = async () => {
-      const result = await fetchChat(chatId, initialRepoId);
-      if (typeof result !== 'string') { 
-        setRepoId(result.repoId); 
-        setInitialMessages(result.messages); 
-      }
-    };
-
-    fetchData();
-  }, [chatId, initialRepoId]);
-  
+  const [previousMessages, setPreviousMessages] = useState<Message[]>([]);
+  const { isPreferencesVisible ,setIsPreferencesVisible } = useUserPreferences();
+  const cacheRef = useRef<Map<string, CacheEntry>>(new Map());
+  const CACHE_EXPIRATION_TIME = 5 * 60 * 1000; // 5 minutes
   
   const togglePreferences = () => {
     setIsPreferencesVisible(!isPreferencesVisible);
@@ -51,6 +40,43 @@ export function RepoChatLayout({ chatId, repoId: initialRepoId }: ChatProps) {
   if (repoId) {
     repoUrl = repoIdExtractor(repoId);
   }
+
+  useEffect(() => {
+    const fetchChatData = async () => {
+      if (chatId && repoId) {
+        const cacheKey = `${chatId}-${repoId}`;
+        const cachedEntry = cacheRef.current.get(cacheKey);
+        const now = Date.now();
+
+        if (cachedEntry && now - cachedEntry.timestamp < CACHE_EXPIRATION_TIME) {
+          setPreviousMessages(cachedEntry.messages);
+          console.log("Using chat data from cache");
+        } else {
+          try {
+            const chat = await fetchChat(chatId, repoId);
+            console.log("Attempting to fetch chat data", chat);
+            if (chat) {
+              if (chat.userId === userId) {
+                cacheRef.current.set(cacheKey, { messages: chat.messages, timestamp: now });
+                setPreviousMessages(chat.messages);
+                console.log("Previous messages", chat.messages);
+              } else {
+                setPreviousMessages([]);
+                console.log("No previous messages");
+              }
+            } else {
+              setPreviousMessages([]);
+              console.log("No chat data found");
+            }
+          } catch (error) {
+            console.error("Error fetching chat:", error);
+          }
+        }
+      }
+    };
+    fetchChatData();
+  }, [chatId, repoId, userId]);
+
   
   return (
     <div className="flex flex-row min-h-full">
@@ -96,26 +122,17 @@ export function RepoChatLayout({ chatId, repoId: initialRepoId }: ChatProps) {
       {/* Center Panel Below */}
       <div className="flex flex-1 flex-col h-full rounded-lg ">
         {/* Top Bar of CP Below */}
-        <div className="w-full flex justify-between">
-          <div>
+        <div className="w-auto flex justify-between space-x-2 mb-2">
+          <div className="space-x-3">
             <RepoListProps repoUrl={repoUrl} />
+            <ServiceListProps />
           </div>
           <div>
-            {/* <RepoChatHistory/> */}
-            {userId ? (
-              <>
-                {/* <RepoChatHistoryMobile>
-                  <ChatHistory userId={userId} />
-                </RepoChatHistoryMobile>
-                <RepoChatHistoryToggle /> */}
-              </>
-            ) : (
-              <></>
-            )}
+          <ChatHistory userId={userId}/>
           </div>
         </div>
         <div>
-          <RepoChat chatId={chatId} repoId={repoId}/>
+          <RepoChat chatId={chatId} repoId={repoId} previousMessages={previousMessages} />
         </div>
         {/* Chat Portion Chat Panel Below */}
       </div>

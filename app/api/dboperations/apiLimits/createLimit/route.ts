@@ -1,21 +1,9 @@
+// api/dboperations/apiLimits/createLimit/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import clientPromise from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
+import { ApiLimits } from "@/lib/typesserver";
 
-interface ApiLimits {
-  _id?: ObjectId;
-  userId: string;
-  totalRepoAddedCount: number;
-  totalChatsCreatedCount: number;
-  currentRepoAddedCount: number;
-  currentChatsCreatedCount: number;
-  currentRepoAddedLimit: number;
-  currentChatsCreatedLimit: number;
-  createdAt?: Date;
-  lastUpdatedAt?: Date;
-  purchaseHistory: any[];
-  currentUserType: string;
-}
 
 export async function POST(req: NextRequest) {
   const userInfo: ApiLimits = await req.json();

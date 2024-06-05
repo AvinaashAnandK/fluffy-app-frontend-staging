@@ -1,272 +1,645 @@
-// 1. Import dependencies
-import 'server-only';
-import { auth, currentUser } from "@clerk/nextjs/server";
-import { createAI, createStreamableValue, getMutableAIState } from 'ai/rsc';
-import { OpenAI } from 'openai';
-
+import "server-only";
+import { auth } from "@clerk/nextjs/server";
+import { createAI, createStreamableValue } from "ai/rsc";
+import { OpenAI } from "openai";
+import {
+  FetchDataParams,
+  RetrievalResults,
+  Message,
+  UserPreferences,
+  FluffyThoughts,
+  GenerationStates,
+  Chat,
+  ChatCompletionOpenAI,
+} from "@/lib/typesserver";
+import { config, fixedParams } from "@/lib/config";
+import {
+  evaluationInstruction,
+  retreivalInstruction,
+  freeQueryInstruction,
+  evaluationInstructionRetreival,
+} from "@/lib/utils";
+import {checkChatLimits, saveChat, updateChatLimit} from "@/lib/mongodbcalls";
 export const maxDuration = 180;
 
-// 1. Initialize OpenAI clients 
-// 1a. For GPT4 Turbo Model (OpenAI)
+// Client for generation
 const openai = new OpenAI({
   apiKey: process.env.OPENAIAAK96_API_KEY,
 });
 
-// 1b. For Cohere Command R+ (Azure)
+// Client for evaluation
+const openai35turbo = new OpenAI({
+  apiKey: process.env.OPENAIAAK96_API_KEY,
+});
 
-// 1c. For GPT3.5 (Azure)
-
-// 2. Define interfaces for search results and content results
-interface SearchResult {
-  title: string;
-  link: string;
-  snippet: string;
-  favicon: string;
-}
-interface ContentResult extends SearchResult {
-  html: string;
-}
-
-interface FetchDataParams {
-  github_url: string;
-  user_id?: string;
-  user_query: string;
-  dev_expertise?: string;
-  task?: string;
-  repo_expertise?: string;
-  response_type?: string;
-  dev_languages?: string;
-}
-interface RetreivalResults {
-  prompt: RagPrompt;
-  download_sources: DownloadSource[];
-  documentation_sources_list: DocumentationSource[];
-  code_sources: CodeSource[];
-}
-
-interface RagPrompt {
-  instructions: string;
-  instruction_reiterate: string;
-  user_query: string;
-  task: string;
-  tags: string[]; 
-  token_lengths: TokenLengths;
-  downloads?: string;
-  documentation?: string;
-  code?: string;
-}
-
-interface TokenLengths {
-  instructions?: number;
-  downloads?: number;
-  documentation?: number;
-  code?: number;
-  instruction_reiterate?: number;
-  user_query?: number;
-}
-
-interface DownloadSource {
-  download_instruction: string;
-  download_type: string;
-  download_description: string;
-  download_source: string;
-}
-
-interface DocumentationSource {
-  doc_type: string;
-  doc_filename: string;
-  doc_path: string;
-  doc_source_directory: string;
-}
-
-interface CodeSource {
-  file_path: string;
-  dependancy_count: number;
-}
-
-interface Message {
-  id: number;
-  type: string;
-  content: string;
-  userMessage: string;
-  isStreaming: boolean;
-  searchResults?: RetreivalResults;
-}
-
-async function getSources({ github_url = 'https://github.com/huggingface/transformers', user_id = 'admin', user_query }: FetchDataParams): Promise<RetreivalResults> {
+// Fetch sources
+async function getSources({
+  github_url,
+  user_id = "admin",
+  user_query,
+}: FetchDataParams): Promise<RetrievalResults> {
   try {
     const data = {
       github_url,
       user_id,
       user_query,
     };
-    console.log('Request data:', data);
 
     const headers = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     };
 
-    const response = await fetch('http://20.197.51.194:80/fetchdata', {
-      method: 'POST',
-      headers: headers,
-      body: JSON.stringify(data),
-    });
+    const response = await fetch(
+      `${process.env.RETRIEVAL_BOX_ENDPOINT}/fetchdata`,
+      {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(data),
+      }
+    );
 
-    const jsonResponse = await response.json();
-    // console.log('Response JSON:', jsonResponse);
-
-    return jsonResponse;
+    if (response.ok) {
+      try {
+        const jsonResponse = await response.json();
+        return jsonResponse;
+      } catch (jsonError) {
+        console.error("Error parsing JSON response:", jsonError);
+        throw new Error("Received malformed JSON from the server.");
+      }
+    } else {
+      const errorText = await response.text();
+      console.error(`HTTP Error: ${response.status} - ${errorText}`);
+      throw new Error(
+        `Server responded with error ${response.status}: ${errorText}`
+      );
+    }
   } catch (error) {
-    console.error('Error fetching search results:', error);
+    console.error("Error fetching search results:", error);
     throw error;
   }
 }
 
-const dboperationsUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}/api/dboperations` : 'http://localhost:3000/api/dboperations';
-
-const checkChatLimits = async (userId: string, userEmail: string) => {
-  const params = new URLSearchParams({
-    userId,
-    userEmail,
-    repoLimit: 'false',  
-  });
-
-  try {
-    const response = await fetch(`${dboperationsUrl}/apiLimits/checkLimit?${params.toString()}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
+// Evaluate responses
+const chatContextEvaluator = async (
+  evalInstruction: string,
+  generatedAnswer: string,
+  userQuery: string,
+  context: string
+): Promise<ChatCompletionOpenAI> => {
+  return await openai.chat.completions.create({
+    messages: [
+      {
+        role: "system",
+        content: evalInstruction,
       },
-    });
+      {
+        role: "user",
+        content: `###CONTEXT###
+        ${context}
+        ###USER QUERY###
+        ${userQuery}
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const result = await response.json();
-    // console.log('Check chat limits result:', result);
-    return result;
-  } catch (error) {
-    console.error('Failed to fetch chat limits:', error);
-    return null;
-  }
+        ###GENERATED ANSWER###
+        ${generatedAnswer}`,
+      },
+    ],
+    model: "gpt-4o",
+    response_format: { type: "json_object" },
+    temperature: 0.1,
+  });
 };
 
+const chatFreeEvaluator = async (
+  evalInstruction: string,
+  generatedAnswer: string,
+  userQuery: string
+): Promise<ChatCompletionOpenAI> => {
+  return await openai35turbo.chat.completions.create({
+    messages: [
+      {
+        role: "system",
+        content: evalInstruction,
+      },
+      {
+        role: "user",
+        content: `###USER QUERY###
+        ${userQuery}
 
-async function myAction(userMessage: string, previousMessages: Message[], loadedRepo: any, userPreferences: any): Promise<any> {
+        ###GENERATED ANSWER###
+        ${generatedAnswer}`,
+      },
+    ],
+    model: "gpt-3.5-turbo",
+    response_format: { type: "json_object" },
+    temperature: 0.1,
+  });
+};
+
+// Core handler
+async function myAction(
+  userMessage: string,
+  rawMessage: string,
+  allMessages: Message[],
+  loadedRepo: any,
+  userPreferences: UserPreferences,
+  currentMessage: Message
+): Promise<any> {
   "use server";
   const { userId, sessionClaims } = auth();
-  const { repoUrl,repoFullName,repoOrgName,repoName } = loadedRepo;
-  const { chatRepoTasks, knowRepoOptions, coderOptions, fluffyResponseOptions, languagesOptions } = userPreferences;
-
-  const userEmail: string = sessionClaims?.email as string || "";
-
-  // console.log('User Id:', userId);
-  // console.log('Session Claims:', sessionClaims);
-  // console.log('User Email:', userEmail);
-  // console.log('Repo Url:', repoUrl);
-  // console.log('Repo Full Name:', repoFullName);
-  // console.log('Repo Org Name:', repoOrgName);
-  // console.log('Repo Name:', repoName);
-  // console.log('Chat Repo Tasks:', chatRepoTasks);
-  // console.log('Know Repo Options:', knowRepoOptions);
-  // console.log('Coder Options:', coderOptions);
-  // console.log('Fluffy Response Options:', fluffyResponseOptions);
-  // console.log('Languages Options:', languagesOptions);
-  // console.log('User Message:', userMessage);
-
-
-  // console.log('Prev messages length:', previousMessages.length);
-  // console.log('User Id', userId);
-  // console.log('User email', sessionClaims?.email);
-
+  const {
+    repoUrl,
+    repoFullName,
+    repoOrgName,
+    repoName,
+    serviceKey,
+    repoId,
+    chatId,
+  } = loadedRepo;
+  const {
+    chatRepoTasks,
+    knowRepoOptions,
+    coderOptions,
+    fluffyResponseOptions,
+    languagesOptions,
+  } = userPreferences;
+  const userEmail: string = (sessionClaims?.email as string) || "";
+  const userName: string = (sessionClaims?.fullName as string) || "";
   const streamable = createStreamableValue({});
 
+  currentMessage.fluffyStatus = {
+    gateKeepingChecks: "queued",
+    gateKeepingStatus: "queued",
+    sourcesNeeded: "No",
+    sourcesFetched: "queued",
+    fluffyThoughtsNeeded: "Yes",
+    fluffyThoughtsFetched: "queued",
+    llmResponseFetched: "queued",
+    llmResponseEnd: "No",
+    fluffyStatusOverall: "queued",
+  };
+
+  currentMessage.fluffyThoughts = {
+    title: "",
+    shortSummary: "",
+    detailedSummary: "",
+    tags: [],
+    score: 0,
+    edgeCases: [],
+    feedbackonAccuracy: "",
+    feedbackonCompleteness: "",
+    fluffyFeedback: "",
+    searchPhrases: [],
+    followUp: [],
+  };
+
+  streamable.update({ fluffyStatus: currentMessage.fluffyStatus });
+
   if (!userId) {
-    streamable.update({ 'llmResponse': "Please login to talk to the Repo" });
-    streamable.update({ 'llmResponseEnd': true });
-    streamable.done({ status: 'done' });
-    return streamable.value;
-  } 
-
-  const limitCheck = await checkChatLimits(userId, userEmail);
-
-  if (limitCheck.limitExceeded) {
-    streamable.update({ 'llmResponse': "You have reached your chat limit. Please upgrade your account or wait until your limit resets." });
-    streamable.update({ 'llmResponseEnd': true });
-    streamable.done({ status: 'done' });
-    return streamable.value;
+    currentMessage.fluffyStatus.gateKeepingChecks = "failed";
+    currentMessage.fluffyStatus.gateKeepingStatus = "no_user_id";
+    currentMessage.fluffyStatus.fluffyStatusOverall = "failed";
+    streamable.update({ fluffyStatus: currentMessage.fluffyStatus });
+  } else {
+    const limitCheck = await checkChatLimits(userId, userEmail);
+    if (limitCheck?.limitExceeded) {
+      currentMessage.fluffyStatus.gateKeepingChecks = "failed";
+      currentMessage.fluffyStatus.gateKeepingStatus = "limits_exceeded";
+      currentMessage.fluffyStatus.fluffyStatusOverall = "failed";
+      streamable.update({ fluffyStatus: currentMessage.fluffyStatus });
+    } else if (!repoUrl) {
+      currentMessage.fluffyStatus.gateKeepingChecks = "failed";
+      currentMessage.fluffyStatus.gateKeepingStatus = "no_repo_url";
+      currentMessage.fluffyStatus.fluffyStatusOverall = "failed";
+      streamable.update({ fluffyStatus: currentMessage.fluffyStatus });
+    } else {
+      currentMessage.fluffyStatus.gateKeepingChecks = "passed";
+      currentMessage.fluffyStatus.gateKeepingStatus = "success";
+      currentMessage.fluffyStatus.fluffyStatusOverall = "inprogress";
+      streamable.update({ fluffyStatus: currentMessage.fluffyStatus });
+    }
   }
 
-  if (!repoUrl) {
-    streamable.update({ 'llmResponse': "Repo not recogonized, please try again." });
-    streamable.update({ 'llmResponseEnd': true });
-    streamable.done({ status: 'done' });
-    return streamable.value;
-  } 
+  switch (currentMessage.fluffyStatus.gateKeepingChecks) {
+    case "failed":
 
-  
-  const finalContent: Array<any> = [];
+    case "passed":
+      const finalContent: Array<any> = [];
+      currentMessage.fluffyStatus.sourcesNeeded =
+        repoFullName === "fluffy/llm" ? "No" : "Yes";
+      currentMessage.fluffyStatus.sourcesFetched =
+        currentMessage.fluffyStatus.sourcesNeeded === "Yes"
+          ? "queued"
+          : "skipped";
+      streamable.update({ fluffyStatus: currentMessage.fluffyStatus });
 
-  // (async () => {
-  //   // console.log('userMessage', userMessage);
-  //   const sourcesQuery: FetchDataParams = {
-  //     user_query: userMessage,
-  //     github_url: loadedRepoUrl,
-  //   };
-  //   console.log('Sources query:', sourcesQuery);
-  //   const [sources] = await Promise.all([
-  //     getSources(sourcesQuery)
-  //   ]);
+      const promptChatTasks =
+        currentMessage.fluffyStatus.sourcesNeeded === "Yes"
+          ? fixedParams[chatRepoTasks]
+          : fixedParams[`${chatRepoTasks}Free`];
+      const promptKnowRepoOptions = fixedParams[knowRepoOptions];
+      const promptCoderOptions = fixedParams[coderOptions];
+      const promptLanguageOptions = `${fixedParams.language
+        } ${languagesOptions.join(", ")} ${fixedParams.languageend}`;
+      const promptFluffyResponseOptions = fixedParams[fluffyResponseOptions];
+      const promptFluffyResponseTokens =
+        fixedParams[`${fluffyResponseOptions}Token`];
+      const promptChatRepoTasksAugment =
+        currentMessage.fluffyStatus.sourcesNeeded === "Yes"
+          ? fixedParams[`${chatRepoTasks}Augment`]
+          : fixedParams[`${chatRepoTasks}AugmentContext`];
 
-  //   console.log('Sources keys:', sources);
+      (async () => {
+        if (currentMessage.fluffyStatus.sourcesNeeded === "Yes") {
+          currentMessage.fluffyStatus.sourcesFetched = "inprogress";
+          streamable.update({ fluffyStatus: currentMessage.fluffyStatus });
 
-  //   streamable.update({ 'searchResults': sources });
-    
-  //   const chatCompletion = await openai.chat.completions.create({
-  //     messages:
-  //       [{
-  //         role: "system", content: `
-  //         - Here is my query "${userMessage}", respond back with an answer that is as long as possible. If you can't find any relevant results, respond with "No relevant results found." `
-  //       }], 
-  //       stream: true, 
-  //       model: "gpt-4-turbo-preview",
-  //       temperature: 0,
-  //   });
+          const sourcesQuery: FetchDataParams = {
+            user_query: rawMessage,
+            github_url: repoUrl,
+          };
 
-  //   for await (const chunk of chatCompletion) {
-  //     if (chunk.choices[0]?.delta?.content && chunk.choices[0]?.finish_reason !== "stop") {
-  //       streamable.update({ 'llmResponse': chunk.choices[0].delta.content });
-  //       finalContent.push(chunk.choices[0].delta.content);
-  //       console.log('Streamed contents:', chunk.choices[0].delta.content);
-  //     } else if (chunk.choices[0]?.finish_reason === "stop") {
-  //       streamable.update({ 'llmResponseEnd': true });
-  //       // console.log('Final streamed contents:', finalContent.join(''));
-  //     }
-  //   }
+          const sources = await getSources(sourcesQuery);
 
-  //   streamable.done({ status: 'done' });
-  // })();
-  
-  streamable.done({ status: 'done' })
-  return streamable.value;
+          currentMessage.fluffyStatus.sourcesFetched = "done";
+          currentMessage.sources = sources;
+          currentMessage.tags = currentMessage.sources.prompt?.tags;
+          streamable.update({ fluffyStatus: currentMessage.fluffyStatus });
+          streamable.update({ sources: currentMessage.sources });
+          streamable.update({ tags: currentMessage.tags });
+
+          currentMessage.contextUsed = `${currentMessage.sources.prompt.downloads} ${currentMessage.sources.prompt.documentation} ${currentMessage.sources.prompt.code} `;
+          currentMessage.instructionUsed = retreivalInstruction(
+            repoFullName,
+            repoUrl,
+            promptChatTasks,
+            promptKnowRepoOptions,
+            promptCoderOptions,
+            promptLanguageOptions,
+            promptChatRepoTasksAugment,
+            promptFluffyResponseOptions
+          );
+
+          try {
+            const chatCompletion = await openai.chat.completions.create({
+              messages: [
+                {
+                  role: "system",
+                  content: `${currentMessage.instructionUsed} ${currentMessage.contextUsed}`,
+                },
+                {
+                  role: "user",
+                  content: `${userMessage}`,
+                },
+              ],
+              stream: true,
+              model: "gpt-4o",
+              temperature: 0.2,
+              max_tokens: promptFluffyResponseTokens,
+            });
+
+            for await (const chunk of chatCompletion) {
+              currentMessage.fluffyStatus.llmResponseFetched = "inprogress";
+              streamable.update({ fluffyStatus: currentMessage.fluffyStatus });
+              if (
+                chunk.choices[0]?.delta?.content &&
+                chunk.choices[0]?.finish_reason !== "stop"
+              ) {
+                finalContent.push(chunk.choices[0].delta.content);
+                streamable.update({
+                  llmResponse: chunk.choices[0].delta.content,
+                });
+              } else if (chunk.choices[0]?.finish_reason === "stop") {
+                currentMessage.fluffyStatus.llmResponseEnd = "Yes";
+                streamable.update({
+                  fluffyStatus: currentMessage.fluffyStatus,
+                });
+                streamable.update({ llmResponseEnd: true });
+              }
+            }
+          } catch (error) {
+            currentMessage.fluffyStatus.llmResponseFetched = "failed";
+            currentMessage.fluffyStatus.fluffyStatusOverall = "failed";
+            streamable.update({ fluffyStatus: currentMessage.fluffyStatus });
+            console.error("Error in chat completion:", error);
+          }
+
+          currentMessage.content = finalContent.join(" ");
+          currentMessage.fluffyStatus.llmResponseFetched = "done";
+          currentMessage.fluffyStatus.fluffyThoughtsFetched = "inprogress";
+          streamable.update({ fluffyStatus: currentMessage.fluffyStatus });
+
+          const evalInstruction = evaluationInstructionRetreival(
+            repoFullName,
+            repoUrl,
+            promptChatTasks,
+            promptKnowRepoOptions,
+            promptCoderOptions,
+            promptLanguageOptions
+          );
+
+          try {
+            const rawEvalResponse = await chatContextEvaluator(
+              evalInstruction,
+              currentMessage.content,
+              userMessage,
+              currentMessage.contextUsed
+            );
+
+            let parsedContent: any;
+            try {
+              parsedContent = JSON.parse(
+                rawEvalResponse?.choices[0]?.message?.content
+              );
+            } catch (error) {
+              console.error("Failed to parse JSON in eval response:", error);
+              parsedContent = {
+                title: "",
+                shortSummary: "",
+                detailedSummary: "",
+                tags: [],
+                score: 0,
+                edgeCases: [],
+                feedbackonAccuracy: "",
+                feedbackonCompleteness: "",
+                fluffy_feedback: "",
+                searchPhrases: [],
+                followUp: [],
+              };
+            }
+
+            currentMessage.fluffyThoughts = {
+              title: parsedContent.title ?? "",
+              shortSummary: parsedContent.shortSummary ?? "",
+              detailedSummary: parsedContent.detailedSummary ?? "",
+              tags: parsedContent.tags ?? [],
+              score: Number(parsedContent.score) ?? 0,
+              edgeCases: parsedContent.unaddressed_issues_and_edge_cases ?? [],
+              feedbackonAccuracy: parsedContent.feedback_on_accuracy ?? "",
+              feedbackonCompleteness:
+                parsedContent.feedback_on_completeness ?? "",
+                fluffyFeedback : parsedContent.fluffy_feedback ?? "",
+              searchPhrases: parsedContent.search_phrases ?? [],
+              followUp: parsedContent.follow_up ?? [],
+            } as FluffyThoughts;
+
+            
+            currentMessage.fluffyStatus.fluffyThoughtsFetched = "done";
+            currentMessage.fluffyStatus.fluffyThoughtsFetched = "done";
+            streamable.update({ fluffyStatus: currentMessage.fluffyStatus });
+            streamable.update({
+              fluffyThoughts: currentMessage.fluffyThoughts,
+            });
+          } catch (error) {
+            currentMessage.fluffyStatus.fluffyThoughtsFetched = "failed";
+            currentMessage.fluffyStatus.fluffyStatusOverall = "failed";
+            streamable.update({ fluffyStatus: currentMessage.fluffyStatus });
+            console.error("Error in evaluation:", error);
+          }
+        } else {
+          currentMessage.fluffyStatus.sourcesFetched = "skipped";
+          streamable.update({ fluffyStatus: currentMessage.fluffyStatus });
+
+          currentMessage.instructionUsed = freeQueryInstruction(
+            promptChatTasks,
+            promptCoderOptions,
+            promptLanguageOptions,
+            promptChatRepoTasksAugment,
+            promptFluffyResponseOptions
+          );
+          try {
+            const chatCompletion = await openai.chat.completions.create({
+              messages: [
+                {
+                  role: "system",
+                  content: `${currentMessage.instructionUsed} `,
+                },
+                {
+                  role: "user",
+                  content: `${userMessage}`,
+                },
+              ],
+              stream: true,
+              model: "gpt-4o",
+              temperature: 0.2,
+              max_tokens: promptFluffyResponseTokens,
+            });
+
+            for await (const chunk of chatCompletion) {
+              currentMessage.fluffyStatus.llmResponseFetched = "inprogress";
+              streamable.update({ fluffyStatus: currentMessage.fluffyStatus });
+              if (
+                chunk.choices[0]?.delta?.content &&
+                chunk.choices[0]?.finish_reason !== "stop"
+              ) {
+                finalContent.push(chunk.choices[0].delta.content);
+                streamable.update({
+                  llmResponse: chunk.choices[0].delta.content,
+                });
+              } else if (chunk.choices[0]?.finish_reason === "stop") {
+                currentMessage.fluffyStatus.llmResponseEnd = "Yes";
+                streamable.update({
+                  fluffyStatus: currentMessage.fluffyStatus,
+                });
+                streamable.update({ llmResponseEnd: true });
+              }
+            }
+          } catch (error) {
+            currentMessage.fluffyStatus.llmResponseFetched = "failed";
+            currentMessage.fluffyStatus.fluffyStatusOverall = "failed";
+            streamable.update({ fluffyStatus: currentMessage.fluffyStatus });
+            console.error("Error in chat completion:", error);
+          }
+
+          currentMessage.content = finalContent.join(" ");
+          currentMessage.fluffyStatus.llmResponseFetched = "done";
+          currentMessage.fluffyStatus.fluffyThoughtsFetched = "inprogress";
+          streamable.update({ fluffyStatus: currentMessage.fluffyStatus });
+
+          const evalInstruction = evaluationInstruction(
+            repoFullName,
+            repoUrl,
+            promptChatTasks,
+            promptKnowRepoOptions,
+            promptCoderOptions,
+            promptLanguageOptions
+          );
+          try {
+            const rawEvalResponse = await chatFreeEvaluator(
+              evalInstruction,
+              currentMessage.content,
+              userMessage
+            );
+
+            let parsedContent: any;
+            try {
+              parsedContent = JSON.parse(
+                rawEvalResponse?.choices[0]?.message?.content
+              );
+            } catch (error) {
+              console.error("Failed to parse JSON in eval response:", error);
+              parsedContent = {
+                title: "",
+                shortSummary: "",
+                detailedSummary: "",
+                tags: [],
+                score: 0,
+                edgeCases: [],
+                feedbackonAccuracy: "",
+                feedbackonCompleteness: "",
+                searchPhrases: [],
+                followUp: [],
+              };
+            }
+
+            currentMessage.fluffyThoughts = {
+              title: parsedContent.title ?? "",
+              shortSummary: parsedContent.shortSummary ?? "",
+              detailedSummary: parsedContent.detailedSummary ?? "",
+              tags: parsedContent.tags ?? [],
+              score: Number(parsedContent.score) ?? 0,
+              edgeCases: parsedContent.unaddressed_issues_and_edge_cases ?? [],
+              feedbackonAccuracy: parsedContent.feedback_on_accuracy ?? "",
+              feedbackonCompleteness:
+                parsedContent.feedback_on_completeness ?? "",
+              fluffyFeedback: parsedContent.fluffy_feedback ?? "",
+              searchPhrases: parsedContent.search_phrases ?? [],
+              followUp: parsedContent.follow_up ?? [],
+            } as FluffyThoughts;
+
+            currentMessage.fluffyStatus.fluffyThoughtsFetched = "done";
+            currentMessage.fluffyStatus.fluffyThoughtsFetched = "done";
+            streamable.update({ fluffyStatus: currentMessage.fluffyStatus });
+            streamable.update({
+              fluffyThoughts: currentMessage.fluffyThoughts,
+            });
+          } catch (error) {
+            currentMessage.fluffyStatus.fluffyThoughtsFetched = "failed";
+            currentMessage.fluffyStatus.fluffyStatusOverall = "failed";
+            streamable.update({ fluffyStatus: currentMessage.fluffyStatus });
+            console.error("Error in evaluation:", error);
+          }
+        }
+
+        // console.log("Fluffy Response Rack:", currentMessage);
+        // console.log("Fluffy Status Rack:", currentMessage.fluffyStatus);
+        
+        if (currentMessage.fluffyThoughts) {
+          // Append tags if fluffyThoughts.tags is not an empty list
+          if (currentMessage.fluffyThoughts.tags && currentMessage.fluffyThoughts.tags.length > 0) {
+              currentMessage.tags = [...currentMessage.tags, ...currentMessage.fluffyThoughts.tags];
+          }
+
+          // Set title if fluffyThoughts.title is not an empty string
+          if (currentMessage.fluffyThoughts.title && currentMessage.fluffyThoughts.title !== "") {
+              currentMessage.title = currentMessage.fluffyThoughts.title;
+          }
+
+          // Set shortSummary if fluffyThoughts.shortSummary is not an empty string
+          if (currentMessage.fluffyThoughts.shortSummary && currentMessage.fluffyThoughts.shortSummary !== "") {
+              currentMessage.shortSummary = currentMessage.fluffyThoughts.shortSummary;
+          }
+
+          // Set shortSummary to detailedSummary if fluffyThoughts.detailedSummary is not an empty string
+          if (currentMessage.fluffyThoughts.detailedSummary && currentMessage.fluffyThoughts.detailedSummary !== "") {
+              currentMessage.shortSummary = currentMessage.fluffyThoughts.detailedSummary;
+          }
+        }
+
+        streamable.update({ fluffyThoughts: currentMessage.fluffyThoughts });
+
+        console.log(currentMessage.fluffyThoughts)
+
+        const messageIndex = allMessages.findIndex(
+          (msg) => msg.id === currentMessage.id
+        );
+        if (messageIndex !== -1) {
+          allMessages.splice(messageIndex, 1);
+        }
+
+        const newMessage: Message = currentMessage;
+
+        // Add the new message at the end of the modified allMessages list
+        allMessages.push(newMessage);
+
+        // Find the earliest and latest createdAt dates
+        const createdAtTimestamps = allMessages.map((msg) =>
+          new Date(msg.createdAt).getTime()
+        );
+        const earliestCreatedAt = new Date(Math.min(...createdAtTimestamps));
+        const latestCreatedAt = new Date(Math.max(...createdAtTimestamps));
+
+        // Construct embedText by looping through all messages
+        let embedText = allMessages
+          .map(
+            (msg) =>
+              `Title: ${msg.title}\nUser Query: ${msg.userMessage}\nDescriptions: ${msg.shortSummary}\nDetailed Description: ${msg.detailedSummary}\nAnswer: ${msg.content}`
+          )
+          .join("\n\n");
+
+        // Modify chatObject before returning it
+        let chatObject: Chat = {
+          repoId: repoId,
+          path: `playground/${chatId}/repochat/${repoId}`,
+          sharePath: `share/${chatId}/repochat/${repoId}`,
+          uniqueId: `${chatId}-${repoId}`,
+          chatId: chatId,
+          repoUrl: repoUrl,
+          repoName: repoName,
+          title: currentMessage.title,
+          description: currentMessage.shortSummary || "",
+          service: serviceKey,
+          createdAt: earliestCreatedAt.toISOString(),
+          lastUpdatedAt: latestCreatedAt.toISOString(),
+          shareSettings: "public",
+          userEmail: userEmail,
+          userName: userName,
+          userId: userId || "",
+          embedText: embedText,
+          messages: allMessages,
+        };
+
+        // console.log("Chat Object:", chatObject);
+
+        const handleChatOperation = async () => {
+          try {
+            const saveResult = await saveChat(chatObject);
+            console.log("Chat operation result:", saveResult);
+        
+            if (saveResult) {
+              const limitUpdateResult = await updateChatLimit(chatObject.userId);
+              console.log("Limit update result:", limitUpdateResult);
+            }
+          } catch (error) {
+            console.error("Error handling chat operation:", error);
+          }
+        };
+        
+        handleChatOperation();
+
+        streamable.done({ status: "done" });
+      })();
+      return streamable.value;
+  }
 }
+
 // 11. Define initial AI and UI states
 const initialAIState: {
-  role: 'user' | 'assistant' | 'system' | 'function';
+  role: "user" | "assistant" | "system" | "function";
   content: string;
   id?: string;
   name?: string;
 }[] = [];
+
 const initialUIState: {
   id: number;
   display: React.ReactNode;
 }[] = [];
+
 // 12. Export the AI instance
 export const AI = createAI({
   actions: {
-    myAction
+    myAction,
   },
   initialUIState,
   initialAIState,
-}); 
+});
