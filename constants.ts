@@ -18,7 +18,6 @@ export const MAX_COUNTS = {
   };
   
 export const EMAIL_USER_TYPES: { [key: string]: string } = {
-    // Specific email address mappings
     'avinaash96@gmail.com': 'BETA',
     'lodhapratik9@gmail.com': 'ENT',
 };
@@ -27,10 +26,7 @@ export const DOMAIN_USER_TYPES: { [key: string]: string } = {
   // Domain-based mappings
   'neodocs.in': 'ENT',
   'iima.ac.in': 'ENT',
-  
-  // Specific email address mappings
-  'avinaash96@gmail.com': 'BETA',
-  'lodhapratik9@gmail.com': 'ENT',
+  '3dguru.ai': 'ENT',
 };
 
 export const DEFAULT_USER_TYPE = 'FREE';

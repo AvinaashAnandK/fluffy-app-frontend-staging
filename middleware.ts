@@ -22,6 +22,7 @@ const publicRoutes = [
       "/api/dboperations/chatHistory/fetchChat",
       "/api/dboperations/chatHistory/fetchUserChats",
       "/api/dboperations/chatHistory/updateChat",
+      "/api/fetchsources",
       "/api/dbcalls/checkrepolimit",
       "/api/dbcalls/checkchatlimit",
       "/api/dbcalls/increaserepolimit",

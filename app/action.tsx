@@ -1,3 +1,4 @@
+// app/action.tsx
 import "server-only";
 import { auth } from "@clerk/nextjs/server";
 import { createAI, createStreamableValue } from "ai/rsc";
@@ -38,6 +39,9 @@ async function getSources({
   user_id = "admin",
   user_query,
 }: FetchDataParams): Promise<RetrievalResults> {
+  const sourcesUrl = process.env.VERCEL_URL
+  ? `https://${process.env.VERCEL_URL}/api/fetchsources`
+  : "http://localhost:3000/api/fetchsources";
   try {
     const data = {
       github_url,
@@ -49,14 +53,11 @@ async function getSources({
       "Content-Type": "application/json",
     };
 
-    const response = await fetch(
-      `${process.env.RETRIEVAL_BOX_ENDPOINT}/fetchdata`,
-      {
-        method: "POST",
-        headers: headers,
-        body: JSON.stringify(data),
-      }
-    );
+    const response = await fetch(sourcesUrl, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({ messages: data }),
+    });
 
     if (response.ok) {
       try {
