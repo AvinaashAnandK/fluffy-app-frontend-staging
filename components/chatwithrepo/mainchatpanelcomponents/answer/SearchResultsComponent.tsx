@@ -182,7 +182,7 @@ const SearchResultsComponent = ({ searchResults }: { searchResults: RetreivedSou
  
     const SearchResultsSkeleton = () => (
         <div className='items-center justify-center'>
-            <FluffyLoader/>
+            <FluffyLoader loaderMessage="Fluffy is digging into the repo to find the relevant files..."/>
         </div>
     );
 

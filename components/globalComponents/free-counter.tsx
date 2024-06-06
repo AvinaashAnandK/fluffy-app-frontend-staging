@@ -42,33 +42,33 @@ const FreeCounter = ({ shouldRefetch }: { shouldRefetch: boolean }) => {
         currentChatsCreatedLimit: 0,
     });
 
-    const { onOpen } = useProModal();
-
-    const fetchData = async () => {
-        if (!userId) return;
-
-        setLoading(true);
-        const cachedLimits = sessionStorage.getItem('userLimits');
-        const lastFetch = sessionStorage.getItem('lastFetchTime');
-        const currentTime = new Date().getTime();
-
-        // Check if the data is older than 1.5 minutes or should refetch is true
-        if (shouldRefetch || !cachedLimits || !lastFetch || currentTime - parseInt(lastFetch) > 90000) {
-            try {
-                const result = await fetchUserLimit(userId, userEmail);
-                sessionStorage.setItem('userLimits', JSON.stringify(result));
-                sessionStorage.setItem('lastFetchTime', currentTime.toString());
-                setLimits(result);
-            } catch (error) {
-                console.error('Error fetching limits:', error);
-            }
-        } else {
-            setLimits(JSON.parse(cachedLimits));
-        }
-        setLoading(false);
-    };
+    const { onOpen } = useProModal();    
 
     useEffect(() => {
+        const fetchData = async () => {
+            if (!userId) return;
+    
+            setLoading(true);
+            const cachedLimits = sessionStorage.getItem('userLimits');
+            const lastFetch = sessionStorage.getItem('lastFetchTime');
+            const currentTime = new Date().getTime();
+    
+            // Check if the data is older than 1.5 minutes or should refetch is true
+            if (shouldRefetch || !cachedLimits || !lastFetch || currentTime - parseInt(lastFetch) > 90000) {
+                try {
+                    const result = await fetchUserLimit(userId, userEmail);
+                    sessionStorage.setItem('userLimits', JSON.stringify(result));
+                    sessionStorage.setItem('lastFetchTime', currentTime.toString());
+                    setLimits(result);
+                } catch (error) {
+                    console.error('Error fetching limits:', error);
+                }
+            } else {
+                setLimits(JSON.parse(cachedLimits));
+            }
+            setLoading(false);
+        };
+
         fetchData();
     }, [userId, userEmail, shouldRefetch]);
 

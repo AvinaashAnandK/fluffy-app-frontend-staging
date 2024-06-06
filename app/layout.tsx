@@ -8,6 +8,7 @@ import { ModalProvider } from '@/components/globalModals/modal-provider'
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { AI } from './action';
+import { Analytics } from '@vercel/analytics/react';
 
 const fontMain = Lato({
   weight: "400",
@@ -33,6 +34,7 @@ export default function RootLayout({
           <AI>
           <TooltipProvider>
             {children}
+            <Analytics />
           </TooltipProvider>
           <Toaster/>
           </AI>
