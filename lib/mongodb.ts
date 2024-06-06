@@ -1,7 +1,7 @@
 // lib/mongodb.ts
 import { MongoClient } from 'mongodb';
 
-const uri = process.env.MONGODB_URI || 'mongodb+srv://p17avinaashak:be0pR6L4IrajqfKL@testcluster.ffohqjc.mongodb.net/?retryWrites=true&w=majority&appName=testCluster';
+const uri = process.env.MONGODB_URI || "mongodb+srv://p17avinaashak:be0pR6L4IrajqfKL@fluffybackend.kpgst.mongodb.net/?retryWrites=true&w=majority&appName=fluffyBackend";
 const options = {};
 
 let client: MongoClient;
