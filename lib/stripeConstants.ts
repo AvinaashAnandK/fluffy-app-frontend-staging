@@ -88,12 +88,12 @@ export const pricingTiers: PricingTier[] = [
 ];
 
 export const promos_prod = {
-  "first_discount_yearly": "WCxvGZyE",
+  "first_discount_yearly": "U7MHO11U",
 };
 
 export const price_codes_prod = {
-  "monthly": "price_1PS25fP48z1TJ6IXfcJ6LHmF",
-  "yearly": "price_1PS25fP48z1TJ6IXfcJ6LHmF",
+  "monthly": "price_1PUzLpP48z1TJ6IXiUCvSPQd",
+  "yearly": "price_1PUzLmP48z1TJ6IXTnoAxRZS",
 }
 
 export const promos_test = {
