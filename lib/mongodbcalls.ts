@@ -373,7 +373,7 @@ export const createStripeSubscription = async (purchaseObject: PurchaseHistory) 
     }
   };
 
-  export const updateStripeSubscription = async (purchaseUpdateObject: PurchaseHistoryUpdate ) => {
+export const updateStripeSubscription = async (purchaseUpdateObject: PurchaseHistoryUpdate ) => {
     const createUrl = `${dboperationsUrl}/purchaseHistory/updatePurchase`;
     try {
       const response = await fetch(createUrl, {
@@ -404,8 +404,7 @@ export const fetchCurrentSubscription = async (userId: string) => {
   });
 
   try {
-    const response = await fetch(
-      `${dboperationsUrl}/purchaseHistory/fetchCurrentSubscription?${params.toString()}`,
+    const response = await fetch(`${dboperationsUrl}/purchaseHistory/fetchCurrentSubscription?${params.toString()}`,
       {
         method: "GET",
         headers: {

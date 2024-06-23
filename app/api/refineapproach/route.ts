@@ -23,11 +23,11 @@ export async function POST(req: Request) {
             "approach_raw": JSON.stringify(approach_raw.data)
         };
 
-        console.log("Constructing the payload for refined approach")
+        // console.log("Constructing the payload for refined approach")
         console.log(data)
 
         const response = await axios.post(`${process.env.ASKFLUFFY_BOX_ENDPOINT}/refapproachtest`, data, { headers: headers });
-        console.log(response)
+        // console.log(response)
         return NextResponse.json(response.data);
 
     } catch (error) {

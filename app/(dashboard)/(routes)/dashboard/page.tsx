@@ -38,14 +38,14 @@ export default function DashboardPage () {
   useEffect(() => {
     const callRefineApproach = async () => {
       if (approachGenResponse) {
-        console.log("Calling approach refining APIs");
+        // console.log("Calling approach refining APIs");
         try {
           const refinedResponse = await axios.post("/api/refineapproach", {
             approach_raw: approachGenResponse
           });
           console.log("Response received from refineapproach API");
-          console.log(refinedResponse);
-          console.log("Updating RefineApproach status");
+          // console.log(refinedResponse);
+          // console.log("Updating RefineApproach status");
           setRefinedApproachResponse(refinedResponse);
         } catch (error: any) {
           console.log(error);
@@ -61,21 +61,21 @@ export default function DashboardPage () {
     console.log("Query received from the user");
     setApproachGenResponse(null);
     setRefinedApproachResponse(null);
-    console.log(values);
+    // console.log(values);
     try {
-      console.log("Calling approach gen APIs");
+      // console.log("Calling approach gen APIs");
       const response = await axios.post("/api/approachgen", {
           messages: values.query
       });
       
-      console.log("Response received from approach gen");
-      console.log(response);
+      // console.log("Response received from approach gen");
+      // console.log(response);
 
-      console.log("Updating ApproachGen status");
+      // console.log("Updating ApproachGen status");
       setApproachGenResponse(response);
-      console.log("ApproachGen status updated");
+      // console.log("ApproachGen status updated");
       approachGenFlag = 1;
-      console.log(approachGenResponse);
+      // console.log(approachGenResponse);
     } catch(error:any){
       console.log(error);
     } finally{
@@ -89,9 +89,9 @@ export default function DashboardPage () {
     if (inputStr) { // Check if inputStr is defined
         let test_utils = subtaskparse(inputStr);
         subtask = test_utils;
-        console.log(test_utils);
+        // console.log(test_utils);
     } else {
-        console.log("Validated Output not found to be extracted");
+        // console.log("Validated Output not found to be extracted");
     }
 } else {
     console.log("Subtasks yet to be extracted");

@@ -19,7 +19,7 @@ const font = Borel({
 export const Navbar = () => {
     const [shouldRefetch, setShouldRefetch] = useState(false);
 
-    console.log('shouldRefetch:', shouldRefetch);
+    // console.log('shouldRefetch:', shouldRefetch);
     
     const handleMouseEnter = () => {
         const lastFetch = sessionStorage.getItem('lastFetchTime');

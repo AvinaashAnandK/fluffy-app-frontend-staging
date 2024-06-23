@@ -55,7 +55,7 @@ const AddRepoModal = () => {
             const data = await response.json();
 
             if (response.ok) {
-                console.log('Ingestion started successfully:', data);
+                // console.log('Ingestion started successfully:', data);
                 onClose(); // Close the modal on success
                 toast({
                     description: "Repo ingestion started successfully.",
@@ -70,7 +70,7 @@ const AddRepoModal = () => {
             }
         } catch (error) {
             toast({
-                description: "Repo ingestion failed, try again.",
+                description: `Repo ingestion failed - error occurred: ${error}`,
                 variant: 'destructive', // Assuming your toast implementation supports a 'status' prop
             });
         }

@@ -548,7 +548,7 @@ async function myAction(
 
         streamable.update({ fluffyThoughts: currentMessage.fluffyThoughts });
 
-        console.log(currentMessage.fluffyThoughts)
+        // console.log(currentMessage.fluffyThoughts)
 
         const messageIndex = allMessages.findIndex(
           (msg) => msg.id === currentMessage.id

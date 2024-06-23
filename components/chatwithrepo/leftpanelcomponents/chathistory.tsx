@@ -55,7 +55,7 @@ const ChatHistory = ({ userId }: ChatHistoryProps) => {
         }
 
         const data = await response.json();
-        console.log("data", data.length);
+        // console.log("data", data.length);
         setChats(data);
         cacheRef.current = { data, timestamp: now };
       } catch (error) {

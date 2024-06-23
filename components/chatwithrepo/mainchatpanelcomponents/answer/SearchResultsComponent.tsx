@@ -152,7 +152,7 @@ const SearchResultsComponent = ({ searchResults }: { searchResults: RetreivedSou
         if (searchResults.download_sources) {
             setDownloadSources(searchResults.download_sources);
             setDownloadSourcesLength(searchResults.download_sources.length);
-            console.log(searchResults.download_sources.length);
+            // console.log(searchResults.download_sources.length);
         } else {
             setDownloadSources([]);
             setDownloadSourcesLength(0);
@@ -163,7 +163,7 @@ const SearchResultsComponent = ({ searchResults }: { searchResults: RetreivedSou
         
             setDocumentationSources(uniqueDocumentationSources);
             setDocumentationSourcesLength(uniqueDocumentationSources.length);
-            console.log(uniqueDocumentationSources.length);
+            // console.log(uniqueDocumentationSources.length);
         } else {
             setDocumentationSources([]);
             setDocumentationSourcesLength(0);
@@ -172,7 +172,7 @@ const SearchResultsComponent = ({ searchResults }: { searchResults: RetreivedSou
         if (searchResults.code_sources) {
             setCodeSources(searchResults.code_sources);
             setCodeSourcesLength(searchResults.code_sources.length);
-            console.log(searchResults.code_sources.length);
+            // console.log(searchResults.code_sources.length);
         } else {
             setCodeSources([]);
             setCodeSourcesLength(0);

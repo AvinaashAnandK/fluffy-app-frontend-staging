@@ -54,19 +54,19 @@ export function RepoChatLayout({ chatId, repoId: initialRepoId }: ChatProps) {
         } else {
           try {
             const chat = await fetchChat(chatId, repoId);
-            console.log("Attempting to fetch chat data", chat);
+            // console.log("Attempting to fetch chat data", chat);
             if (chat) {
               if (chat.userId === userId) {
                 cacheRef.current.set(cacheKey, { messages: chat.messages, timestamp: now });
                 setPreviousMessages(chat.messages);
-                console.log("Previous messages", chat.messages);
+                // console.log("Previous messages", chat.messages);
               } else {
                 setPreviousMessages([]);
-                console.log("No previous messages");
+                // console.log("No previous messages");
               }
             } else {
               setPreviousMessages([]);
-              console.log("No chat data found");
+              // console.log("No chat data found");
             }
           } catch (error) {
             console.error("Error fetching chat:", error);

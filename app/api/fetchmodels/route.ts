@@ -25,7 +25,7 @@ export async function POST(req: Request) {
             "index": index
         };
 
-        console.log("Constructing the payload for refined approach")
+        // console.log("Constructing the payload for refined approach")
         console.log(data)
 
         const response = await axios.post('http://20.219.193.181/getmodels', data, { headers: headers });

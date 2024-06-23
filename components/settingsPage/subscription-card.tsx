@@ -157,7 +157,7 @@ export default function SettingsSubscriptionCard({ userId, userEmail, userName }
       if (userId) {
         const plan = await getCurrentPlan(userId);
         setCurrentPlan(plan);
-        console.log(plan);
+        // console.log(plan);
       }
       setIsLoading(false);
     }

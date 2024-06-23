@@ -4,7 +4,7 @@ import clientPromise from '@/lib/mongodb';
 import { PurchaseHistory } from "@/lib/typesserver";
 
 export async function GET(req: NextRequest) {
-  console.log(`Request URL: ${req.url}`)
+  // console.log(`Request URL: ${req.url}`)
   const url = new URL(req.url);
   const userId = url.searchParams.get('userId');
   const userEmail = url.searchParams.get('userEmail');

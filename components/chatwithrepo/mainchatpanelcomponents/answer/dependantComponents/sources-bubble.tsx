@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import SourceItem from './source-item';
-import { useCurrentChatMetadata } from '@/hooks/zustand-store-fluffy';
 import { Message } from "ai/react";
 
 export interface ChatMessageProps {
@@ -45,7 +44,7 @@ export default function SourceBubble({ message }: ChatMessageProps) {
   const docAndCodeSourcesLength = sources.length;
   const downloadsLength = downloadSources.length;
 
-  console.log(sources)
+//   console.log(sources)
 
     return (
         <div className='flex space-x-4 ml-4 mb-4'>

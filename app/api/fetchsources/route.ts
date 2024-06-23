@@ -10,13 +10,13 @@ export async function POST(req: Request) {
     const { userId } = auth();
     const body = await req.json();
 
-    console.log("[FETCH_SOURCES_REQUEST] RAW", body);
+    // console.log("[FETCH_SOURCES_REQUEST] RAW", body);
     
     const { messages } = body;
 
     const { github_url, user_id, user_query } = messages;
 
-    console.log("[FETCH_SOURCES_REQUEST]", github_url, user_id, user_query);
+    // console.log("[FETCH_SOURCES_REQUEST]", github_url, user_id, user_query);
 
     // if (!userId) {
     //   return new NextResponse("Unauthorized", { status: 401 });
