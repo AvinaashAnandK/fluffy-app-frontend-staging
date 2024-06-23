@@ -403,6 +403,7 @@ export const fetchCurrentSubscription = async (userId: string) => {
     userId
   });
 
+  console.log("api endpoint", `${dboperationsUrl}/purchaseHistory/fetchCurrentSubscription?${params.toString()}`);
   try {
     const response = await fetch(`${dboperationsUrl}/purchaseHistory/fetchCurrentSubscription?${params.toString()}`,
       {

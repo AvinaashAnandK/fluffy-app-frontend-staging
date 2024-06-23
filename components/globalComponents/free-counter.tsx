@@ -8,6 +8,8 @@ import { fetchUserLimit } from '@/lib/mongodbcalls';
 import { Sparkles } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useProModal } from "@/hooks/zustand-store-fluffy";
+import { getCurrentPlan } from "@/lib/subscription";
+import { FormattedSubscription } from '@/lib/typesserver';
 
 const SkeletonFreeCounter = () => {
     return (
@@ -29,7 +31,12 @@ const SkeletonFreeCounter = () => {
     );
   };
 
-const FreeCounter = ({ shouldRefetch }: { shouldRefetch: boolean }) => {
+interface FreeCounterProps {
+    shouldRefetch: boolean;
+    isPro: boolean;
+}
+
+const FreeCounter = ({ shouldRefetch, isPro }: FreeCounterProps) => {
     const { userId } = useAuth();
     const { user } = useUser();
     const userEmail = user?.primaryEmailAddress?.emailAddress;
@@ -70,8 +77,9 @@ const FreeCounter = ({ shouldRefetch }: { shouldRefetch: boolean }) => {
         };
 
         fetchData();
-    }, [userId, userEmail, shouldRefetch]);
+    }, [userId, userEmail, shouldRefetch,isPro]);
 
+    
     if (loading) {
         return <SkeletonFreeCounter />;
     }
@@ -87,19 +95,24 @@ const FreeCounter = ({ shouldRefetch }: { shouldRefetch: boolean }) => {
                 <CardContent className="py-4">
                     <div className="text-center text-sm text-white mb-4 space-y-2">
                         <p className="text-customco5">
-                            {currentChatsCreatedCount} / {currentChatsCreatedLimit} Chats Created
+                            {currentChatsCreatedCount} / {currentChatsCreatedLimit} Queries
                         </p>
                         <Progress className="h-3 bg-customco1/30" value={chatProgress} />
                         <p className="text-customco5">
-                            {currentRepoAddedCount} / {currentRepoAddedLimit} Repos Added
+                            {currentRepoAddedCount} / {currentRepoAddedLimit} Repos
                         </p>
                         <Progress className="h-3 bg-customco1/30" value={repoProgress} />
                     </div>
                     <div className='items-end'>
+                    {isPro ? <p className="text-customco5 text-xs text-center">
+                     {"You're on a Pro plan, manage your subscription in settings."}
+                    </p>
+                     : 
                     <Button size="sm" variant="premium" className='w-full' onClick={onOpen}>
-                        Upgrade
-                        <Sparkles className="h-4 w-4 fill-white text-white ml-2" />
-                    </Button>
+                    Upgrade
+                    <Sparkles className="h-4 w-4 fill-white text-white ml-2" />
+                </Button>
+                 }
                     </div>
                 </CardContent>
             </Card>
