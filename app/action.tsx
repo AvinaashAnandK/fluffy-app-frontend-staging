@@ -40,7 +40,7 @@ async function getSources({
   user_query,
 }: FetchDataParams): Promise<RetrievalResults> {
   const sourcesUrl = process.env.NEXT_PUBLIC_APP_URL
-  ? `https://${process.env.NEXT_PUBLIC_APP_URL}/api/fetchsources`
+  ? `${process.env.NEXT_PUBLIC_APP_URL}/api/fetchsources`
   : "http://localhost:3000/api/fetchsources";
   try {
     const data = {

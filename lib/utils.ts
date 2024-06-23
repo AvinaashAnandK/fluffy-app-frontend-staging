@@ -250,7 +250,7 @@ export function freeQueryInstruction(
 
 export function absoluteUrl(path: string) {
   const sourcesUrl = process.env.NEXT_PUBLIC_APP_URL
-  ? `https://${process.env.NEXT_PUBLIC_APP_URL}`
+  ? `${process.env.NEXT_PUBLIC_APP_URL}`
   : "http://localhost:3000";
   
   console.log('absoluteUrl:', `${sourcesUrl}${path}`)
