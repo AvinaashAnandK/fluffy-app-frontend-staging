@@ -21,7 +21,7 @@ const LandingHero = () => {
             </div>
             <div className="flex gap-4 flex-col">
               <h1 className="text-5xl md:text-6xl max-w-5xl text-center">
-               Copilot that helps you build features faster using public & open-source repos
+              Answer-engine for public repos & open-source libraries
               </h1>
               <p className="text-lg md:text-xl leading-relaxed tracking-tight text-muted-foreground max-w-5xl text-center">
                 From debugging specific and challenging bugs to exploring the latest in research-driven repos and bridging gaps in documentation, Fluffy has you covered!
