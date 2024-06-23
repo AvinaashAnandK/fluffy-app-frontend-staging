@@ -119,10 +119,10 @@ const ProPlanDetails = ({ subscription, loading, onManageSubscription }: ProPlan
   </div>
 );
 
-const renderPlanDetails = (currentPlan: string | null, subscription: FormattedSubscription | null, loading: boolean, onManageSubscription: () => void) => {
+const renderPlanDetails = (currentPlan: string | null, subscription: FormattedSubscription | null, loading: boolean, onManageSubscription: () => void, onUpgrade: () => void) => {
   switch (currentPlan) {
     case "Basic":
-      return <BasicPlanDetails onUpgrade={onManageSubscription} />;
+      return <BasicPlanDetails onUpgrade={onUpgrade} />;
     case "Pro":
       return <ProPlanDetails subscription={subscription!} loading={loading} onManageSubscription={onManageSubscription} />;
     default:
@@ -175,7 +175,7 @@ export default function SettingsSubscriptionCard({ userId, userEmail, userName }
             <CircleNotch className="w-6 h-6 mx-auto fill-purple-500 animate-spin" />
           </div>
         )}
-        {!isLoading && renderPlanDetails(currentPlan?.currentPlan || "Basic", currentPlan, loading, onManageSubscription)}
+        {!isLoading && renderPlanDetails(currentPlan?.currentPlan || "Basic", currentPlan, loading, onManageSubscription, onUpgrade)}
       </CardContent>
     </Card>
   );
