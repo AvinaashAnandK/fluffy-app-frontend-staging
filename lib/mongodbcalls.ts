@@ -1,8 +1,8 @@
 // @/lib/mongodbcalls.ts
 import { ApiLimits, Chat, PurchaseHistory, PurchaseHistoryUpdate, UpdatePurchaseRequest } from "./typesserver";
 
-const dboperationsUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}/api/dboperations`
+const dboperationsUrl = process.env.NEXT_PUBLIC_APP_URL
+  ? `https://${process.env.NEXT_PUBLIC_APP_URL}/api/dboperations`
   : "http://localhost:3000/api/dboperations";
 
 export const checkChatLimits = async (userId: string, userEmail: string) => {

@@ -39,8 +39,8 @@ async function getSources({
   user_id = "admin",
   user_query,
 }: FetchDataParams): Promise<RetrievalResults> {
-  const sourcesUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}/api/fetchsources`
+  const sourcesUrl = process.env.NEXT_PUBLIC_APP_URL
+  ? `https://${process.env.NEXT_PUBLIC_APP_URL}/api/fetchsources`
   : "http://localhost:3000/api/fetchsources";
   try {
     const data = {

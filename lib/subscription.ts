@@ -4,7 +4,7 @@ import { PurchaseHistory, FormattedSubscription } from "./typesserver";
 
 export function getPlanId(plan: string, frequency: string) {
     const deploymentType = "testing in prod";
-    let sourceType = process.env.VERCEL_URL
+    let sourceType = process.env.NEXT_PUBLIC_APP_URL
     ? "Prod"
     : "Test";
 
@@ -34,7 +34,7 @@ export function getPlanId(plan: string, frequency: string) {
 
 export function getPromoId(plan: string, frequency: string) {
     const deploymentType = "testing in prod";
-    let sourceType = process.env.VERCEL_URL
+    let sourceType = process.env.NEXT_PUBLIC_APP_URL
     ? "Prod"
     : "Test";
 
