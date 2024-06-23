@@ -203,3 +203,37 @@ export interface UpdatePurchaseRequest {
   chatsLimit: number;
   userType: string;
 }
+
+export interface PurchaseHistory {
+  _id?: ObjectId;
+  userId: string;
+  userEmail: string;
+  createdAt: Date;
+  lastUpdatedAt: Date;
+  subscriptionStatus: string;  // free, active, cancelled
+  currentPlan?: string; // Free, Pro, Enterprise
+  subcriptionStart?: Date | null;
+  nextBillingDate?: Date | null;
+  stripeCustomerId?: string;
+  stripeSubscriptionId?: string;
+  stripePriceId?: string;
+  stripeCurrentPeriodEnd?: Date | null;
+  clickOnSubscriptionCounter?: number;
+  pricePaid?: number;
+}
+
+export interface PurchaseHistoryUpdate {
+  subscriptionStatus: string;  
+  cancellationReason: string;
+  stripeSubscriptionId: string;
+}
+
+export interface FormattedSubscription {
+  currentPlan: string | null;
+  subcriptionStartDate: string | null; 
+  nextBillingDate: string | null;
+  lastUpdatedAt: string | null;
+  subscriptionStatus: string | null;
+  subcriptionStart: string | null;
+  billingFrequency: string | null;
+}

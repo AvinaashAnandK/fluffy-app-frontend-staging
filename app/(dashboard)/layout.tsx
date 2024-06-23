@@ -1,12 +1,15 @@
 import { Navbar } from "@/components/globalComponents/navbar"
 import { Sidebar } from "@/components/globalComponents/sidebar"
+import { auth } from '@clerk/nextjs/server';
 
 const DashboardLayout = async ({
     children 
 } : {
     children: React.ReactNode;
 }) => {
-
+    const { userId, sessionClaims } = auth();
+    const userEmail: string = (sessionClaims?.email as string) || "";
+    const userName: string = (sessionClaims?.fullName as string) || "";
 
     return (
         <div className="h-full">

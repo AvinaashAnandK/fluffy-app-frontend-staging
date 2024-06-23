@@ -1,5 +1,5 @@
 // @/lib/mongodbcalls.ts
-import { ApiLimits, Chat, UpdatePurchaseRequest } from "./typesserver";
+import { ApiLimits, Chat, PurchaseHistory, PurchaseHistoryUpdate, UpdatePurchaseRequest } from "./typesserver";
 
 const dboperationsUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}/api/dboperations`
@@ -322,3 +322,104 @@ export const fetchUserPreferences = async (userId: string) => {
       return null;
     }
   };
+
+export const fetchStripeCustomerId = async (userId: string, userEmail: string) => {
+    const params = new URLSearchParams({
+      userId,
+      userEmail
+    });
+    try {
+      const response = await fetch(
+        `${dboperationsUrl}/purchaseHistory/fetchStripeCustomerId?${params.toString()}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      return result.stripeCustomerId;
+    } catch (error) {
+      console.error("Failed in fetching stripe customer id for user:", error);
+      return null;
+    }
+  };
+
+export const createStripeSubscription = async (purchaseObject: PurchaseHistory) => {
+    const createUrl = `${dboperationsUrl}/purchaseHistory/createPurchase`;
+    try {
+      const response = await fetch(createUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(purchaseObject),
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`HTTP error! status: ${response.status}, body: ${errorText}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error("Failed to handle creating stripe subscription operation:", error);
+      return null;
+    }
+  };
+
+  export const updateStripeSubscription = async (purchaseUpdateObject: PurchaseHistoryUpdate ) => {
+    const createUrl = `${dboperationsUrl}/purchaseHistory/updatePurchase`;
+    try {
+      const response = await fetch(createUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(purchaseUpdateObject),
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`HTTP error! status: ${response.status}, body: ${errorText}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      
+      return result;
+    } catch (error) {
+      console.error("Failed to handle update stripe subscription operation:", error);
+      return null;
+    }
+  };
+
+export const fetchCurrentSubscription = async (userId: string) => {
+  const params = new URLSearchParams({
+    userId
+  });
+
+  try {
+    const response = await fetch(
+      `${dboperationsUrl}/purchaseHistory/fetchCurrentSubscription?${params.toString()}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Failed in fetching stripe subscription for user");
+    return null;
+  }
+};

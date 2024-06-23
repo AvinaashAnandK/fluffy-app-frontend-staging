@@ -1,4 +1,5 @@
 "use client";
+import Intercom from '@intercom/messenger-js-sdk';
 import { cn } from "@/lib/utils";
 import { ScanSearch, GalleryVerticalEnd,Settings,MessageCircle,PackageOpen } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation"
@@ -19,12 +20,12 @@ export const Sidebar = () => {
             label:"Ask Fluffy!",
             pro: false
         },
-        {
-            icon:ScanSearch,
-            href:"/dashboard/explore",
-            label:"Explore",
-            pro: true
-        },
+        // {
+        //     icon:ScanSearch,
+        //     href:"/dashboard/explore",
+        //     label:"Explore",
+        //     pro: true
+        // },
         // {
         //     icon:GalleryVerticalEnd,
         //     href:"/dashboard/history",
@@ -33,8 +34,8 @@ export const Sidebar = () => {
         // },
         {
             icon:Settings,
-            href:"/dashboard/setting",
-            label:"Setting",
+            href:"/dashboard/settings",
+            label:"Settings",
             pro: false
         }
     ];
@@ -53,7 +54,7 @@ export const Sidebar = () => {
                             onClick={() => onNavigate(route.href, route.pro)}
                             key = {route.href}
                             className={cn("text-muted-foreground text-xs group flex p-2 w-full justify-start font-medium cursor-pointer hover:text-primary hover:bg-primary/10 rounded-lg transition",
-                            pathname.startsWith(route.href) && "bg-primary/10 text-primary"
+                            pathname === route.href && "bg-primary/10 text-primary"
                             )}>
                         <div className="flex flex-col gap-y-2 items-center flex-1 text-center">
                             <route.icon className="h-5 w-5" />

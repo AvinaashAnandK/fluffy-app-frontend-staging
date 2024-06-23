@@ -9,6 +9,11 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { AI } from './action';
 import { Analytics } from '@vercel/analytics/react';
+import { PHProvider } from './providers'
+
+import dynamic from 'next/dynamic'
+import Intercom from '@intercom/messenger-js-sdk'
+import { IntercomProvider } from '@/components/intercom/intercom-provider'
 
 const fontMain = Lato({
   weight: "400",
@@ -28,6 +33,8 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
+      <PHProvider>
+      <IntercomProvider/>
       <body className={cn("bg-black",fontMain.className)}>
       <ModalProvider/>
           <ThemeProvider attribute='class' defaultTheme='dark'>
@@ -40,6 +47,7 @@ export default function RootLayout({
           </AI>
           </ThemeProvider>
         </body>
+        </PHProvider>
       </html>
     </ClerkProvider>
   )

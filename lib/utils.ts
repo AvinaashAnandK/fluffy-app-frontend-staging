@@ -247,3 +247,11 @@ export function freeQueryInstruction(
   
     return evaluationInstructionText;
 }
+
+export function absoluteUrl(path: string) {
+  const sourcesUrl = process.env.VERCEL_URL
+  ? `https://${process.env.VERCEL_URL}`
+  : "http://localhost:3000";
+  
+  return `${sourcesUrl}${path}`
+}
