@@ -84,7 +84,9 @@ export async function GET(req: NextRequest){
                     },
                 ],
                 metadata: {userId, userEmail,currentPlan },
-                allow_promotion_codes: true,
+                discounts: [{
+                    coupon: promoId,
+                }],
                 tax_id_collection : {
                     enabled: true,
                 },

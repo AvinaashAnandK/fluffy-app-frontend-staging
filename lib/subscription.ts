@@ -49,7 +49,7 @@ export function getPromoId(plan: string, frequency: string) {
             return promo_list.first_discount_yearly;
         }
         else {
-            return "";
+            return promo_list.first_discount_monthly;
         }
     }
     else {
@@ -58,7 +58,7 @@ export function getPromoId(plan: string, frequency: string) {
             return promo_list.first_discount_yearly;
         }
         else {
-            return "";
+            return promo_list.first_discount_monthly;
         }
 }
 }

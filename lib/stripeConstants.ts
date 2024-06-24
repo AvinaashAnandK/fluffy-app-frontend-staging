@@ -89,6 +89,7 @@ export const pricingTiers: PricingTier[] = [
 
 export const promos_prod = {
   "first_discount_yearly": "U7MHO11U",
+  "first_discount_monthly": "j4n4vgFa",
 };
 
 export const price_codes_prod = {
@@ -98,6 +99,7 @@ export const price_codes_prod = {
 
 export const promos_test = {
   "first_discount_yearly": "jDPodgNc",
+  "first_discount_monthly": "jDPodgNc",
 };
 
 export const price_codes_test = {
