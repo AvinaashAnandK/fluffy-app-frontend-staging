@@ -3,14 +3,15 @@ import { price_codes_prod, price_codes_test, promos_prod, promos_test, pricingTi
 import { PurchaseHistory, FormattedSubscription } from "./typesserver";
 
 export function getPlanId(plan: string, frequency: string) {
-    const deploymentType = "testing in prod";
+    // const deploymentType = "testing in prod";
+    
     let sourceType = process.env.NEXT_PUBLIC_APP_URL
     ? "Prod"
     : "Test";
 
-    if (deploymentType === "testing in prod") {
-        sourceType = "Test";
-    }
+    // if (deploymentType === "testing in prod") {
+    //     sourceType = "Test";
+    // }
 
     if (sourceType === "Prod") {
         const plan_list = price_codes_prod;
@@ -33,14 +34,14 @@ export function getPlanId(plan: string, frequency: string) {
 }
 
 export function getPromoId(plan: string, frequency: string) {
-    const deploymentType = "testing in prod";
+    // const deploymentType = "testing in prod";
     let sourceType = process.env.NEXT_PUBLIC_APP_URL
     ? "Prod"
     : "Test";
 
-    if (deploymentType === "testing in prod") {
-        sourceType = "Test";
-    }
+    // if (deploymentType === "testing in prod") {
+    //     sourceType = "Test";
+    // }
 
     if (sourceType === "Prod") {
         const promo_list = promos_prod;
