@@ -21,6 +21,7 @@ import {
   evaluationInstructionRetreival,
 } from "@/lib/utils";
 import {checkChatLimits, saveChat, updateChatLimit} from "@/lib/mongodbcalls";
+import { createConversationalHistory, createSourceFetchQuery } from "@/lib/actionsUtils";
 export const maxDuration = 180;
 
 // Client for generation
@@ -254,8 +255,12 @@ async function myAction(
           currentMessage.fluffyStatus.sourcesFetched = "inprogress";
           streamable.update({ fluffyStatus: currentMessage.fluffyStatus });
 
+          const userQueryFetch = createSourceFetchQuery(allMessages, currentMessage);
+
+          // console.log("Source Fetch Query:", userQueryFetch)
+
           const sourcesQuery: FetchDataParams = {
-            user_query: rawMessage,
+            user_query: userQueryFetch,
             github_url: repoUrl,
           };
 
@@ -280,12 +285,19 @@ async function myAction(
             promptFluffyResponseOptions
           );
 
+          const conversationalHistory = createConversationalHistory(allMessages, currentMessage);
+          let conversationalHistoryFinal = "";
+          if (conversationalHistory) {
+            conversationalHistoryFinal = conversationalHistory;
+          }
+          // console.log("Conversational History:", conversationalHistoryFinal);
+
           try {
             const chatCompletion = await openai.chat.completions.create({
               messages: [
                 {
                   role: "system",
-                  content: `${currentMessage.instructionUsed} ${currentMessage.contextUsed}`,
+                  content: `${currentMessage.instructionUsed} ${conversationalHistoryFinal}### CONTEXT BELOW ### \n ${currentMessage.contextUsed}`,
                 },
                 {
                   role: "user",
@@ -295,7 +307,6 @@ async function myAction(
               stream: true,
               model: "gpt-4o",
               temperature: 0.2,
-              max_tokens: promptFluffyResponseTokens,
             });
 
             for await (const chunk of chatCompletion) {
@@ -407,12 +418,21 @@ async function myAction(
             promptChatRepoTasksAugment,
             promptFluffyResponseOptions
           );
+
+          const conversationalHistory = createConversationalHistory(allMessages, currentMessage);
+          let conversationalHistoryFinal = "";
+          if (conversationalHistory) {
+            conversationalHistoryFinal = conversationalHistory;
+          }
+
+          // console.log("Conversational History:", conversationalHistoryFinal);
+
           try {
             const chatCompletion = await openai.chat.completions.create({
               messages: [
                 {
                   role: "system",
-                  content: `${currentMessage.instructionUsed} `,
+                  content: `${currentMessage.instructionUsed} ${conversationalHistoryFinal}`,
                 },
                 {
                   role: "user",
@@ -422,7 +442,6 @@ async function myAction(
               stream: true,
               model: "gpt-4o",
               temperature: 0.2,
-              max_tokens: promptFluffyResponseTokens,
             });
 
             for await (const chunk of chatCompletion) {

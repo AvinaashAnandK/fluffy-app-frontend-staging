@@ -60,7 +60,8 @@ const ChatHistoryCard: React.FC<ChatHistoryCardProps> = ({
   const capitalizedOrg = creatorOrg.charAt(0).toUpperCase() + creatorOrg.slice(1);
 
   return (
-    <Card className={cn(" text-white pr-4 mr-4 max-w-fit rounded-lg bg-gradient-to-r from-gradient1left to-gradient4right")}>
+    <div className="">
+    <Card className={cn(" text-white max-w-80 rounded-lg bg-gradient-to-r from-gradient1left to-gradient4right")}>
       <CardHeader className="p-4">
         <CardTitle>
           <div className="text-base pb-0 truncate">{title}</div>
@@ -97,6 +98,7 @@ const ChatHistoryCard: React.FC<ChatHistoryCardProps> = ({
         </div>
       </CardContent>
     </Card>
+    </div>
   );
 };
 

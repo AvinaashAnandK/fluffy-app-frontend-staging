@@ -16,7 +16,7 @@ export const config = {
 
 export const fixedParams = {
     // CHAT_TASKS: With source 
-    explore: 'The user wants to understand how to leverage the functionalities of the repo.',
+    explore: 'The user wants to understand the functionalities of the repo. Only include code snippets from repo context if necessary.',
     debug: 'The user wants to debug an error or bug encountered while using the repo.', 
     solve: 'The user wants to write code using the repo to solve a specific problem, addressing the given conditions and edge cases.',
     verify: 'The user has written code using the repo, but it is not working as expected and wants to understand why.',
@@ -50,9 +50,9 @@ export const fixedParams = {
     experienced: "The user is an experienced coder.",
 
     // FLUFFY_RESPONSE_OPTIONS
-    concise: "The user prefers concise answers. Keep it as succint as possible. Provide code where necessary.",
-    detailed: "The user prefers detailed answers. Provide a comprehensive explanation. Provide code where necessary.",
-    indepth: "The user prefers in-depth answers. Provide a detailed explanation with examples. Provide code where necessary.",
+    concise: "The user prefers concise answers. Keep it as succint as possible. Provide code where necessary. Keep the answer within 2500 tokens if possible.",
+    detailed: "The user prefers detailed answers. Provide a comprehensive explanation. Provide code where necessary. Keep the answer within 2500 tokens if possible.",
+    indepth: "The user prefers in-depth answers. Provide a detailed explanation with examples. Provide code where necessary. Keep the answer within 2500 tokens if possible.",
     conciseToken: 500,
     detailedToken: 1250,
     indepthToken: 2000,

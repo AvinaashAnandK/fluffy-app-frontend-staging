@@ -218,6 +218,7 @@ export function retreivalInstruction(
     2. When uncertain about the answer, convey that to the user along with potential next steps. 
     3. Do your best to resolve the user query using the context provided.
     4. ${promptFluffyResponseOptions}
+    5. If the conversational history is provided, use it to provide a more accurate response.
     
     ### CONTEXT BELOW ###
     `;
@@ -243,7 +244,8 @@ export function freeQueryInstruction(
     2. When uncertain about the answer, convey that to the user along with potential next steps. 
     3. Do your best to resolve the user query using the context provided.
     4. If it is not related to software engineering, reply with "I am Fluffy, a coding expert. I can only help with coding-related queries."
-    5. ${promptFluffyResponseOptions}`;
+    5. ${promptFluffyResponseOptions}
+    6. If the conversational history is provided, use it to provide a more accurate response.`;
   
     return evaluationInstructionText;
 }

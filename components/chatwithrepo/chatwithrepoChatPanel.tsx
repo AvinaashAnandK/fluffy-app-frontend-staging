@@ -20,11 +20,8 @@ import FluffyThoughtsComponent from './mainchatpanelcomponents/answer/FluffyThou
 import { ChatPanelHandler } from './mainchatpanelcomponents/form/prompt-form-handler';
 import { usePathname } from 'next/navigation';
 
-import VideosComponent from '@/components/chatwithrepo/mainchatpanelcomponents/answer/VideosComponent';
 import FollowUpComponent from '@/components/chatwithrepo/mainchatpanelcomponents/answer/FollowUpComponent';
-import { title } from 'process';
-import { link } from 'fs';
-import ReachOutComponent from './mainchatpanelcomponents/answer/ReachOutComponent';
+import { useToast } from "@/components/ui/use-toast"
 
 export interface ChatProps extends React.ComponentProps<'div'> {
   previousMessages: Message[]
@@ -33,6 +30,7 @@ export interface ChatProps extends React.ComponentProps<'div'> {
 }
 
 export function RepoChat({ chatId, repoId, previousMessages, className }: ChatProps) {
+  const { toast } = useToast()
   const path = usePathname()
   console.log("Messages from Repo Chat", previousMessages)
   const { setIsPreferencesVisible } = useUserPreferences();
@@ -246,6 +244,24 @@ export function RepoChat({ chatId, repoId, previousMessages, className }: ChatPr
             }
             if (typedMessage.fluffyStatus) {
               currentMessage.fluffyStatus = typedMessage.fluffyStatus;
+              if (typedMessage.fluffyStatus?.gateKeepingStatus === "limits_exceeded") {
+                toast({
+                  description: "Free limits exceeded. Please upgrade to a paid plan to continue.",
+                  variant: 'destructive',
+              });
+              }
+              if (typedMessage.fluffyStatus?.gateKeepingStatus === "no_repo_url") {
+                toast({
+                  description: "Repo not found. Please refresh and try again.",
+                  variant: 'destructive',
+              });
+              }
+              if (typedMessage.fluffyStatus?.gateKeepingStatus === "limits_exceeded") {
+                toast({
+                  description: "Unauthorized. Unable to retreive user from auth.",
+                  variant: 'destructive',
+              });
+              }
             }
             if (typedMessage.linkedUserChats) {
               currentMessage.linkedUserChats = typedMessage.linkedUserChats;
@@ -280,7 +296,7 @@ export function RepoChat({ chatId, repoId, previousMessages, className }: ChatPr
                         <div className="flex flex-col">
                         {messages.map((message, index) => (
                           <div key={`message-${index}`} className="flex flex-col md:flex-row">
-                            <div className="w-3/4 pr-2">
+                            <div className="w-3/4 max-w-3/4 pr-2">
                             {message.type === 'userMessage' && <UserMessageComponent message={message.userMessage} tags={message.tags} />}
                               {message.fluffyStatus.sourcesNeeded == 'Yes' && ( message.sources) && (
                                 <SearchResultsComponent key={`sources-${index}`} searchResults={message.sources} />
@@ -294,14 +310,8 @@ export function RepoChat({ chatId, repoId, previousMessages, className }: ChatPr
                               <div className="flex flex-col">
                               {message.fluffyThoughts?.followUp && <FollowUpComponent followUp={message.fluffyThoughts?.followUp} handleFollowUpClick={handleFollowUpClick}/> }
                               </div>
-                              {/* {false && (
-                                <div className="flex flex-col">
-                                  <FollowUpComponent key={`followUp-${index}`} followUp={message.followUp} handleFollowUpClick={handleFollowUpClick} />
-                                </div>
-                              )} */}
                             </div>
-                            <div className="w-1/4 pl-2">
-                              {/* {message.userMessage && <VideosComponent key={`videos-${index}`} videos={message.videos} />} */}
+                            <div className="w-1/4 max-w-1/4 pl-2">
                               {(message.fluffyStatus.fluffyThoughtsNeeded=='Yes') && <FluffyThoughtsComponent key={`fluffy-thoughts-${index}`} fluffyThoughts={message.fluffyThoughts} fluffyStatus={message.fluffyStatus}/>}
                             </div>
                           </div>

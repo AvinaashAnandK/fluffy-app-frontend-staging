@@ -124,11 +124,11 @@ const ChatHistory = ({ userId }: ChatHistoryProps) => {
           <PiClockCounterClockwiseLight className="ml-2 h-5 w-5 shrink-0 opacity-50" />
         </Button>
       </SheetTrigger>
-      <SheetContent className="max-w-md" side="right">
+      <SheetContent className="max-w-96" side="right">
         <SheetHeader>
           <SheetTitle>Chat History</SheetTitle>
         </SheetHeader>
-        <ScrollArea className="h-screen">
+        <ScrollArea className="h-full mb-8 pb-8">
           {isButtonClicked ? (
             renderContent()
           ) : (
