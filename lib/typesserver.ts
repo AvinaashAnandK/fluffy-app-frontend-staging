@@ -56,6 +56,8 @@ export interface StreamMessage {
     linkedOrgChats?: string[];
     linkedCommunityChats?: string[];
     webSources?: JSON[];
+    errorMessage?: string;
+    errorReason?: string;
   }
 
 export type UserPreferences = {

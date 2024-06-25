@@ -32,7 +32,7 @@ export interface ChatProps extends React.ComponentProps<'div'> {
 export function RepoChat({ chatId, repoId, previousMessages, className }: ChatProps) {
   const { toast } = useToast()
   const path = usePathname()
-  console.log("Messages from Repo Chat", previousMessages)
+  // console.log("Messages from Repo Chat", previousMessages)
   const { setIsPreferencesVisible } = useUserPreferences();
 
   const isEmptyRepoId = typeof repoId === 'undefined';
@@ -88,6 +88,7 @@ export function RepoChat({ chatId, repoId, previousMessages, className }: ChatPr
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [inputRef]);
+
 
   const onFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();  
@@ -179,7 +180,7 @@ export function RepoChat({ chatId, repoId, previousMessages, className }: ChatPr
   };
 
   const handleUserMessageSubmission = async (userMessage: string, rawMessage: string): Promise<void> => {
-    console.log('handleUserMessageSubmission', userMessage);
+    // console.log('handleUserMessageSubmission', userMessage);
 
     const { repoUrl, repoFullName, repoOrgName, repoName, serviceKey } = useLoadedRepo.getState();
     const loadedRepo = { repoUrl, repoFullName, repoOrgName, repoName, serviceKey, repoId, chatId };
@@ -221,6 +222,29 @@ export function RepoChat({ chatId, repoId, previousMessages, className }: ChatPr
       let llmResponseString = "";
       for await (const message of readStreamableValue(streamableValue)) {
         const typedMessage = message as StreamMessage;
+        // console.log("TYPED MESSAGE", typedMessage)
+        // console.log("ERROR MESSAGE", typedMessage?.errorMessage)
+        if (typedMessage.errorMessage === "Failed gatekeeping checks" ) {
+          // console.log("Failed gatekeeping checks, errorReason: ", typedMessage.errorReason);
+          if (typedMessage.errorReason === "limits_exceeded") {
+            toast({
+              description: "Free limits exceeded. Please upgrade to a paid plan to continue.",
+              variant: 'destructive',
+          });
+          }
+          if (typedMessage.fluffyStatus?.gateKeepingStatus === "no_repo_url") {
+            toast({
+              description: "Repo not found. Please refresh and try again.",
+              variant: 'destructive',
+          });
+          }
+          if (typedMessage.fluffyStatus?.gateKeepingStatus === "no_user_id") {
+            toast({
+              description: "Unauthorized. Unable to retreive user from auth.",
+              variant: 'destructive',
+          });
+          }
+        } 
         setMessages((prevMessages) => {
           const messagesCopy = [...prevMessages];
           const messageIndex = messagesCopy.findIndex(msg => msg.id === newMessageId);
@@ -244,24 +268,6 @@ export function RepoChat({ chatId, repoId, previousMessages, className }: ChatPr
             }
             if (typedMessage.fluffyStatus) {
               currentMessage.fluffyStatus = typedMessage.fluffyStatus;
-              if (typedMessage.fluffyStatus?.gateKeepingStatus === "limits_exceeded") {
-                toast({
-                  description: "Free limits exceeded. Please upgrade to a paid plan to continue.",
-                  variant: 'destructive',
-              });
-              }
-              if (typedMessage.fluffyStatus?.gateKeepingStatus === "no_repo_url") {
-                toast({
-                  description: "Repo not found. Please refresh and try again.",
-                  variant: 'destructive',
-              });
-              }
-              if (typedMessage.fluffyStatus?.gateKeepingStatus === "limits_exceeded") {
-                toast({
-                  description: "Unauthorized. Unable to retreive user from auth.",
-                  variant: 'destructive',
-              });
-              }
             }
             if (typedMessage.linkedUserChats) {
               currentMessage.linkedUserChats = typedMessage.linkedUserChats;
@@ -283,6 +289,7 @@ export function RepoChat({ chatId, repoId, previousMessages, className }: ChatPr
           setCurrentLlmResponse(llmResponseString);
         }
       }
+
     } catch (error) {
       console.error("Error streaming data for user message:", error);
     }

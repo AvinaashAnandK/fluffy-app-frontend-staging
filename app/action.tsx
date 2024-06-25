@@ -22,6 +22,7 @@ import {
 } from "@/lib/utils";
 import {checkChatLimits, saveChat, updateChatLimit} from "@/lib/mongodbcalls";
 import { createConversationalHistory, createSourceFetchQuery } from "@/lib/actionsUtils";
+import { time } from "console";
 export const maxDuration = 180;
 
 // Client for generation
@@ -223,7 +224,10 @@ async function myAction(
 
   switch (currentMessage.fluffyStatus.gateKeepingChecks) {
     case "failed":
-
+      console.log(`Failed gatekeeping checks, reason: ${currentMessage.fluffyStatus.gateKeepingStatus}, skipping generation for user ${userEmail}`)
+      streamable.update({ fluffyStatus: currentMessage.fluffyStatus });
+      streamable.done({ status: "done", errorMessage: "Failed gatekeeping checks", errorReason: currentMessage.fluffyStatus.gateKeepingStatus});
+      break;
     case "passed":
       const finalContent: Array<any> = [];
       currentMessage.fluffyStatus.sourcesNeeded =
@@ -638,8 +642,9 @@ async function myAction(
 
         streamable.done({ status: "done" });
       })();
-      return streamable.value;
+      break;
   }
+  return streamable.value;
 }
 
 // 11. Define initial AI and UI states
