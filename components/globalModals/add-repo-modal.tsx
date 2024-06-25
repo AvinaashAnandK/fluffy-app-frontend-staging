@@ -58,7 +58,7 @@ const AddRepoModal = () => {
                 // console.log('Ingestion started successfully:', data);
                 onClose(); // Close the modal on success
                 toast({
-                    description: "Repo ingestion started successfully. You will receive and email once it's completed.",
+                    description: "Repo ingestion started successfully. \n 📧 You will receive an email once the process is completed.",
                     variant: 'default', // Assuming your toast implementation supports a 'status' prop
                 });
             } else {
