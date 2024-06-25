@@ -79,7 +79,7 @@ export function RepoChatLayout({ chatId, repoId: initialRepoId }: ChatProps) {
 
   
   return (
-    <div className="flex flex-row min-h-full">
+    <div className="flex flex-row min-h-full overflow-x-hidden max-w-full">
       {isPreferencesVisible ? (
         <>
           <div>
@@ -120,9 +120,9 @@ export function RepoChatLayout({ chatId, repoId: initialRepoId }: ChatProps) {
       )}
 
       {/* Center Panel Below */}
-      <div className="flex flex-1 flex-col h-full rounded-lg ">
+      <div className="flex flex-1 flex-col h-full rounded-lg overflow-hidden">
         {/* Top Bar of CP Below */}
-        <div className="w-auto flex justify-between space-x-2 mb-2">
+        <div className="w-full flex justify-between space-x-2 mb-2">
           <div className="space-x-3">
             <RepoListProps repoUrl={repoUrl} />
             <ServiceListProps />

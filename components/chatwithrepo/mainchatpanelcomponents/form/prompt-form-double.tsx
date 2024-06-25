@@ -27,7 +27,7 @@ export const DoubleInputChatPanel = ({ inputValue, setInputValue, onFormSubmit, 
   const placeholder2 = task?.placeholderText2;
   
   return (
-    <div className="sticky inset-x-0 bottom-0 w-full peer-[[data-state=open]]:group-[]:lg:pl-[250px] peer-[[data-state=open]]:group-[]:xl:pl-[300px]">
+    <div className="sticky pt-20 inset-x-0 bottom-0 w-full peer-[[data-state=open]]:group-[]:lg:pl-[250px] peer-[[data-state=open]]:group-[]:xl:pl-[300px]">
       <div className="mx-auto sm:max-w-2xl sm:px-4">
       <div className="px-4 py-2 space-y-4 border-t shadow-lg bg-background sm:rounded-t-xl sm:border md:py-4">
           <form ref={formRef} onSubmit={onFormSubmit}>
