@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs";
+import { auth, currentUser } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import axios from "axios";
 import { checkRepoLimits, updateRepoLimit } from "@/lib/mongodbcalls";
@@ -8,13 +8,14 @@ export const maxDuration = 180;
 // [TODO]
 export async function POST(req: Request) {
     const { userId, sessionClaims } = auth();
+    const user = await currentUser();
 
     try {
         const body = await req.json();
         const github_url = body.github_url;
         const userEmail: string = (sessionClaims?.email as string) || "";
 
-        if (!userId) {
+        if (!userId || !user) {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
@@ -36,7 +37,9 @@ export async function POST(req: Request) {
 
         const ingestion_data = {
             "github_url": github_url,
-            "user_id": userEmail,
+            "user_id": userId || userEmail,
+            "user_name": `${user.firstName}` || sessionClaims?.fullName || "there",
+            "user_email": user.emailAddresses[0].emailAddress || userEmail,
         };
 
         let data = JSON.stringify(ingestion_data)
